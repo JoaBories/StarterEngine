@@ -10,12 +10,12 @@ void Draw();
 
 Engine engine;
 
-int screenHeight = 720;
-int screenWidth = 720;
+int screenHeight = 480;
+int screenWidth = 480;
 
 Color backgroundColor = BLACK;
 
-const char* gameName = "BrickBreaker";
+const char* gameName = "Starter Project";
 
 
 int main() {
@@ -27,6 +27,7 @@ int main() {
         UpdateDraw();
     }
 
+    DeInit();
     
     return 0;
 }
