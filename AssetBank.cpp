@@ -5,6 +5,8 @@
 using std::ifstream, std::ofstream;
 using std::cout, std::endl;
 
+AssetBank* AssetBank::mInstance = nullptr;
+
 TextureEntry::TextureEntry(Texture* text, string name):
 	texturePtr{text},
 	name{name},
@@ -41,6 +43,153 @@ FontEntry::~FontEntry()
 	delete fontPtr;
 }
 
+void AssetBank::LoadAnAsset(fs::path filePath, AssetType type)
+{
+	string dotAssetPath;
+	ifstream fileRead;
+	
+	double startTime = GetTime();
+
+	switch (type)
+	{
+	case None:
+		break;
+	case FontFile:
+		if (filePath.extension() == ".png")
+		{
+			dotAssetPath = filePath.parent_path().string() + "\\" + filePath.filename().replace_extension(".asset").string();
+			string name = filePath.filename().replace_extension("").string();
+
+			fileRead.open(dotAssetPath);
+
+			if (fileRead)
+			{
+				mLoadedFonts[name] = new FontEntry(new Font(LoadFont(filePath.string().c_str())), name);
+			}
+			else
+			{
+				cout << "Failed to read .asset file : " << dotAssetPath << endl;
+			}
+
+			fileRead.close();
+		}
+
+		break;
+	case TextureFile:
+		if (filePath.extension() == ".png")
+		{
+			dotAssetPath = filePath.parent_path().string() + "\\" + filePath.filename().replace_extension(".asset").string();
+			string name = filePath.filename().replace_extension("").string();
+
+			fileRead.open(dotAssetPath);
+
+			if (fileRead)
+			{
+				Image tempImg = LoadImage(filePath.string().c_str());
+
+				string temp;
+				bool tempMultiple = false;
+
+				fileRead >> temp >> tempMultiple;
+
+				if (tempMultiple)
+				{
+					int a, b, c, d;
+					fileRead >> a >> b >> c >> d;
+					mLoadedTextures[name] = new TextureEntry(new Texture(LoadTextureFromImage(tempImg)), name, { a,b }, { c,d });
+				}
+				else
+				{
+					mLoadedTextures[name] = new TextureEntry(new Texture(LoadTextureFromImage(tempImg)), name);
+				}
+
+				UnloadImage(tempImg);
+			}
+			else
+			{
+				cout << "Failed to read .asset file : " << dotAssetPath << endl;
+			}
+			fileRead.close();
+		}
+
+		break;
+	case SoundFile:
+		break;
+	}
+
+	double endTime = GetTime();
+	double totalTime = endTime - startTime;
+	cout << "======== Finish loading " << filePath.filename().replace_extension("") << " in " << totalTime << "s" << endl;
+}
+
+void AssetBank::FetchAnAsset(fs::path filePath, AssetType type)
+{
+	string dotAssetPath;
+	ifstream fileRead;
+	ofstream fileWrite;
+
+	switch (type)
+	{
+	case None:
+		break;
+	case FontFile:
+		if (filePath.extension() == ".png")
+		{
+			dotAssetPath = filePath.parent_path().string() + "\\" + filePath.filename().replace_extension(".asset").string();
+			string name = filePath.filename().replace_extension("").string();
+
+			mUnloadedFonts[name] = filePath;
+
+			fileRead.open(dotAssetPath);
+
+			if (!fileRead)
+			{
+				fileWrite.open(dotAssetPath);
+				if (fileWrite)
+				{
+					fileWrite << name << endl;
+				}
+
+				fileWrite.close();
+			}
+
+			fileRead.close();
+		}
+
+		break;
+	case TextureFile:
+		if (filePath.extension() == ".png")
+		{
+			dotAssetPath = filePath.parent_path().string() + "\\" + filePath.filename().replace_extension(".asset").string();
+			string name = filePath.filename().replace_extension("").string();
+
+			mUnloadedTextures[name] = filePath;
+
+			fileRead.open(dotAssetPath);
+
+			if (!fileRead)
+			{
+				fileWrite.open(dotAssetPath);
+				if (fileWrite)
+				{
+					fileWrite << name << endl;
+					fileWrite << false << endl;
+					fileWrite << 0 << " " << 0 << endl;
+					fileWrite << 0 << " " << 0 << endl;
+				}
+
+				fileWrite.close();
+			}
+
+			fileRead.close();
+		}
+
+		break;
+	case SoundFile:
+		break;
+	}
+}
+
 void AssetBank::SearchAFolder(fs::path folderPath)
 {
 	for (auto& entry : fs::directory_iterator(folderPath))
@@ -49,13 +198,13 @@ void AssetBank::SearchAFolder(fs::path folderPath)
 		{
 			if (entry.path().filename() == "_Fonts")
 			{
-				cout << "==== Start Loading Fonts ====" << endl;
-				SearchAFolder(entry.path(), FontFile);
+				cout << "======== Fetching Fonts" << endl;
+				SearchAFolderFor(entry.path(), FontFile);
 			}
 			else if (entry.path().filename() == "_Textures")
 			{
-				cout << "=== Start Loading Textures ===" << endl;
-				SearchAFolder(entry.path(), ImageFile);
+				cout << "======== Fetching Textures" << endl;
+				SearchAFolderFor(entry.path(), TextureFile);
 			}
 			else
 			{
@@ -65,150 +214,134 @@ void AssetBank::SearchAFolder(fs::path folderPath)
 	}
 }
 
-void AssetBank::SearchAFolder(fs::path folderPath, ForWhat forWhat)
+void AssetBank::SearchAFolderFor(fs::path folderPath, AssetType forWhat)
 {
 	for (const auto& entry : fs::directory_iterator(folderPath))
 	{
 		if (entry.is_directory())
 		{
-			SearchAFolder(entry.path(), forWhat);
+			SearchAFolderFor(entry.path(), forWhat);
 			continue;
 		}
 
-		string dotAssetPath;
-		ifstream fileRead;
-		ofstream fileWrite;
-
-		switch (forWhat)
-		{
-		case None:
-			break;
-		case FontFile:
-			if (entry.path().extension() == ".png")
-			{
-				dotAssetPath = entry.path().parent_path().string() + "\\" + entry.path().filename().replace_extension(".asset").string();
-				string name = entry.path().filename().replace_extension("").string();
-				
-				fileRead.open(dotAssetPath);
-
-				if (fileRead)
-				{
-					mFonts[name] = new FontEntry(new Font(LoadFont(entry.path().string().c_str())), name);
-				}
-				else
-				{
-					mFonts[name] = new FontEntry(new Font(LoadFont(entry.path().string().c_str())), name);
-
-					fileWrite.open(dotAssetPath);
-					if (fileWrite)
-					{
-						fileWrite << name << endl;
-					}
-
-					fileWrite.close();
-				}
-				fileRead.close();
-			}
-
-			break;
-		case ImageFile:
-			if (entry.path().extension() == ".png")
-			{
-				dotAssetPath = entry.path().parent_path().string() + "\\" + entry.path().filename().replace_extension(".asset").string();
-				string name = entry.path().filename().replace_extension("").string();
-
-				fileRead.open(dotAssetPath);
-
-				if (fileRead)
-				{
-					Image tempImg = LoadImage(entry.path().string().c_str());
-				
-					string temp;
-					bool tempMultiple = false;
-
-					fileRead >> temp >> tempMultiple;
-
-					if (tempMultiple)
-					{
-						int a, b, c, d;
-						fileRead >> a >> b >> c >> d;
-						mTextures[name] = new TextureEntry(new Texture(LoadTextureFromImage(tempImg)), name, { a,b }, { c,d });
-					}
-					else
-					{
-						mTextures[name] = new TextureEntry(new Texture(LoadTextureFromImage(tempImg)), name);
-					}
-
-					UnloadImage(tempImg);
-				}
-				else
-				{
-					Image tempImg = LoadImage(entry.path().string().c_str());
-					mTextures[name] = new TextureEntry(new Texture(LoadTextureFromImage(tempImg)), name);
-
-					UnloadImage(tempImg);
-
-					fileWrite.open(dotAssetPath);
-					if (fileWrite)
-					{
-						fileWrite << name << endl;
-						fileWrite << mTextures[name]->multiple << endl;
-						fileWrite << mTextures[name]->tileSize.x << " " << mTextures[name]->tileSize.y << endl;
-						fileWrite << mTextures[name]->tileOffset.x << " " << mTextures[name]->tileSize.y << endl;
-					}
-
-					fileWrite.close();
-				}
-				fileRead.close();
-			}
-
-			break;
-		case SoundFile:
-			break;
-		}
+		FetchAnAsset(entry.path(), forWhat);
 	}
 }
 
-void AssetBank::LoadAll()
+void AssetBank::FetchAll()
 {
-	cout << "=============================" << endl;
-	cout << "==== Start loading Files ====" << endl;
+	cout << "==========| Start fetching Files" << endl;
 	double startTime = GetTime();
+
+	UnfetchAll();
 
 	const fs::path path = fs::path(mResourcePath);
 	SearchAFolder(path);
 
 	double endTime = GetTime();
 	double totalTime = endTime - startTime;
-	cout << "==== Finish loading Files in : "<< totalTime << "s ====" << endl;
-	cout << "=============================" << endl;
+	cout << "==========| Finish fetching Files in : "<< totalTime << "s" << endl;
+}
+
+void AssetBank::UnfetchAll()
+{
+	mUnloadedFonts.clear();
+	mUnloadedTextures.clear();
+}
+
+void AssetBank::LoadAll()
+{
+	cout << "==========| Start loading Files" << endl;
+	double startTime = GetTime();
+
+	UnloadAll();
+
+	for (pair<string, fs::path> unloadedPath : mUnloadedFonts)
+	{
+		LoadAnAsset(unloadedPath.second, FontFile);
+	}
+
+	for (pair<string, fs::path> unloadedPath : mUnloadedTextures)
+	{
+		LoadAnAsset(unloadedPath.second, TextureFile);
+	}
+
+	double endTime = GetTime();
+
+	double totalTime = endTime - startTime;
+	cout << "==========| Finish loading Files in : " << totalTime << "s" << endl;
 }
 
 void AssetBank::UnloadAll()
 {
 	UnloadTextures();
-}
-
-void AssetBank::SaveAllInfo()
-{
-}
-
-void AssetBank::LoadATexture()
-{
+	UnloadFonts();
 }
 
 void AssetBank::UnloadTextures()
 {
-	for (pair<string, TextureEntry*> entry : mTextures)
+	for (pair<string, TextureEntry*> entry : mLoadedTextures)
 	{
-		delete mTextures[entry.first];
+		delete mLoadedTextures[entry.first];
 	}
 
-	mTextures.clear();
+	mLoadedTextures.clear();
 }
 
-void AssetBank::SaveTexturesInfos()
+void AssetBank::UnloadFonts()
 {
+	for (pair<string, FontEntry*> entry : mLoadedFonts) 
+	{
+		delete mLoadedFonts[entry.first];
+	}
+
+	mLoadedFonts.clear();
+}
+
+TextureEntry* AssetBank::GetATexture(string textureName)
+{
+	if (mLoadedTextures.find(textureName) == mLoadedTextures.end())
+	{
+		LoadATexture(textureName);
+	}
+
+	return mLoadedTextures[textureName];
+}
+
+bool AssetBank::LoadATexture(string textureName)
+{
+	if (mUnloadedTextures.find(textureName) == mUnloadedTextures.end())
+	{
+		return false;
+	}
+	else
+	{
+		LoadAnAsset(mUnloadedTextures[textureName], TextureFile);
+		return true;
+	}
+}
+
+FontEntry* AssetBank::GetAFont(string fontName)
+{
+	if (mLoadedFonts.find(fontName) == mLoadedFonts.end())
+	{
+		LoadAFont(fontName);
+	}
+
+	return mLoadedFonts[fontName];
+}
+
+bool AssetBank::LoadAFont(string fontName)
+{
+	if (mUnloadedFonts.find(fontName) == mUnloadedFonts.end())
+	{
+		return false;
+	}
+	else
+	{
+		LoadAnAsset(mUnloadedFonts[fontName], FontFile);
+		return true;
+	}
 }
 
 

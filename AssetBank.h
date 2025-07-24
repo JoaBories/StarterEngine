@@ -36,37 +36,65 @@ struct FontEntry
 	~FontEntry();
 };
 
-enum ForWhat
+enum AssetType
 {
 	None,
 	FontFile,
-	ImageFile,
+	TextureFile,
 	SoundFile,
 };
 
 class AssetBank
 {
 private:
-	map<string, TextureEntry*> mTextures;
-	map<string, FontEntry*> mFonts;
+	map<string, TextureEntry*> mLoadedTextures;
+	map<string, FontEntry*> mLoadedFonts;
+
+	map<string, fs::path> mUnloadedFonts;
+	map<string, fs::path> mUnloadedTextures;
+
+	Texture* mErrorTexture = nullptr;
 
 	const string mResourcePath = "resources";
+
+	void LoadAnAsset(fs::path filePath, AssetType type);
+	void FetchAnAsset(fs::path filePath, AssetType type);
+
+	static AssetBank* mInstance;
 
 public:
 	AssetBank() = default;
 	~AssetBank() = default;
 
+	static AssetBank* GetInstance()
+	{
+		if (!mInstance)
+		{
+			mInstance = new AssetBank();
+		}
+		return mInstance;
+	}
+
+	void Init()
+	{
+		mErrorTexture = new Texture(LoadTexture("resources/Error.png"));
+		FetchAll();
+	}
+
 	void SearchAFolder(fs::path folderPath);
-	void SearchAFolder(fs::path folderPath, ForWhat forWhat);
+	void SearchAFolderFor(fs::path folderPath, AssetType forWhat);
 	
+	void FetchAll();
+	void UnfetchAll();
 	void LoadAll();
 	void UnloadAll();
-	void SaveAllInfo();
-
-	void LoadATexture();
 
 	void UnloadTextures();
-	void SaveTexturesInfos();
+	void UnloadFonts();
 
+	TextureEntry* GetATexture(string textureName);
+	bool LoadATexture(string textureName);
+	FontEntry* GetAFont(string fontName);
+	bool LoadAFont(string fontName);
 };
 

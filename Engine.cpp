@@ -10,6 +10,7 @@ Engine::~Engine()
 
 void Engine::Init()
 {
+	AssetBank::GetInstance()->Init();
 }
 
 void Engine::Update()

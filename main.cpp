@@ -1,5 +1,4 @@
 #include "raylib.h"
-#include "AssetBank.h"
 #include "Engine.h"
 
 void Init();
@@ -17,13 +16,9 @@ Color backgroundColor = BLACK;
 
 const char* gameName = "Starter Project";
 
-AssetBank assetBank = AssetBank();
-
 int main() {
 
-
     Init();
-    assetBank.LoadAll();
     
     while (!WindowShouldClose()) {
         
