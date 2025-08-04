@@ -39,12 +39,12 @@ Vect2F Utils::Vect2FLerp(Vect2F a, Vect2F b, float t)
 {
 	return a + ( b - a ) * Clamp(t, 0, 1);
 }
-
+/*
 Vect3F Utils::Vect3FLerp(Vect3F a, Vect3F b, float t)
 {
 	return a + (b - a) * Clamp(t, 0, 1);
 }
-
+*/
 float Utils::Sign(float value)
 {
 	return (value >= 0) ? 1.0f : -1.0f;
@@ -89,7 +89,55 @@ Vect2F Vect2F::absolute() const
 	return { Utils::Sign(this->x), Utils::Sign(this->y) };
 }
 
-bool Vect2F::operator==(const Vect2F& rm) const 
+Vect2F& Vect2F::operator+=(const Vect2F& rm)
+{
+	*this = *this + rm;
+	return *this;
+}
+
+Vect2F& Vect2F::operator-=(const Vect2F& rm)
+{
+	*this = *this - rm;
+	return *this;
+}
+
+Vect2F& Vect2F::operator*=(const float& rm)
+{
+	*this = *this * rm;
+	return *this;
+}
+
+Vect2F& Vect2F::operator*=(const int& rm)
+{
+	*this = *this * rm;
+	return *this;
+}
+
+Vect2F& Vect2F::operator/=(const float& rm)
+{
+	*this = *this / rm;
+	return *this;
+}
+
+Vect2F& Vect2F::operator/=(const int& rm)
+{
+	*this = *this / rm;
+	return *this;
+}
+
+Vect2F& Vect2F::operator*=(const Vect2F& rm)
+{
+	*this = *this * rm;
+	return *this;
+}
+
+Vect2F& Vect2F::operator/=(const Vect2F& rm)
+{
+	*this = *this / rm;
+	return *this;
+}
+
+bool Vect2F::operator==(const Vect2F& rm) const
 { 
 	return (Utils::nearlyEqual(x, rm.x) && Utils::nearlyEqual(y, rm.y)); 
 }
@@ -103,10 +151,48 @@ const Vect2I Vect2I::down = { 0,-1 };
 const Vect2I Vect2I::right = { 1,0 };
 const Vect2I Vect2I::left = { -1,0 };
 
+Vect2I& Vect2I::operator+=(const Vect2I& rm)
+{
+	*this = *this + rm;
+	return *this;
+}
+
+Vect2I& Vect2I::operator-=(const Vect2I& rm)
+{
+	*this = *this - rm;
+	return *this;
+}
+
+Vect2I& Vect2I::operator*=(const int& rm)
+{
+	*this = *this * rm;
+	return *this;
+}
+
+Vect2I& Vect2I::operator/=(const int& rm)
+{
+	*this = *this / rm;
+	return *this;
+}
+
+Vect2I& Vect2I::operator*=(const Vect2I& rm)
+{
+	*this = *this * rm;
+	return *this;
+}
+
+Vect2I& Vect2I::operator/=(const Vect2I& rm)
+{
+	*this = *this / rm;
+	return *this;
+}
+
 Vect2I Vect2I::absolute() const
 {
 	return { (int) Utils::Sign((float) this->x), (int) Utils::Sign((float) this->y) };
 }
+
+/*
 
 //Vect3F
 
@@ -150,6 +236,8 @@ Vect3I Vect3I::absolute() const
 {
 	return { (int) Utils::Sign((float) this->x), (int) Utils::Sign((float) this->y), (int) Utils::Sign((float) this->z) };
 }
+
+*/
 
 #pragma endregion
 

@@ -136,13 +136,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssetBank.cpp" />
+    <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="GameActor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetBank.h" />
+    <ClInclude Include="Ball.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="GameActor.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

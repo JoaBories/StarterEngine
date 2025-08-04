@@ -7,6 +7,11 @@ void UpdateDraw();
 void Update();
 void Draw();
 
+#include <iostream>
+#include <fstream>
+using std::ifstream, std::ofstream;
+using std::cout, std::endl;
+
 Engine engine;
 
 int screenHeight = 480;
@@ -48,9 +53,9 @@ void UpdateDraw()
     Update();
 
     BeginDrawing();
-    Draw();
-
     ClearBackground(backgroundColor);
+
+    Draw();
     EndDrawing();
 }
 

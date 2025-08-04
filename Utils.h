@@ -30,23 +30,31 @@ using std::uniform_int_distribution;
 
 		//Addition
 		Vect2F operator+(const Vect2F& rm) const { return { x + rm.x, y + rm.y }; }
+		Vect2F& operator+=(const Vect2F& rm);
 
 		//Substraction
 		Vect2F operator-(const Vect2F& rm) const { return { x - rm.x, y - rm.y }; }
+		Vect2F& operator-=(const Vect2F& rm);
 
 		//Scale
 		//Up
 		Vect2F operator*(const float& rm) const { return { x * rm, y * rm }; }
+		Vect2F& operator*=(const float& rm);
 		Vect2F operator*(const int& rm) const { return { x * rm, y * rm }; }
+		Vect2F& operator*=(const int& rm);
 		//Down
 		Vect2F operator/(const float& rm) const { return { x / rm, y / rm }; }
+		Vect2F& operator/=(const float& rm);
 		Vect2F operator/(const int& rm) const { return { x / rm, y / rm }; }
+		Vect2F& operator/=(const int& rm);
 
 		//Multiplication
 		Vect2F operator*(const Vect2F& rm) const { return { x * rm.x, y * rm.y }; }
+		Vect2F& operator*=(const Vect2F& rm);
 
 		//Division
 		Vect2F operator/(const Vect2F& rm) const { return { x / rm.x, y / rm.y }; }
+		Vect2F& operator/=(const Vect2F& rm);
 
 		//Boolean
 		bool operator==(const Vect2F& rm) const;
@@ -81,21 +89,27 @@ using std::uniform_int_distribution;
 
 		//Addition
 		Vect2I operator+(const Vect2I& rm) const { return { x + rm.x, y + rm.y }; }
+		Vect2I& operator+=(const Vect2I& rm);
 
 		//Substraction
 		Vect2I operator-(const Vect2I& rm) const { return { x - rm.x, y - rm.y }; }
+		Vect2I& operator-=(const Vect2I& rm);
 
 		//Scale
 		//Up
 		Vect2I operator*(const int& rm) const { return { x * rm, y * rm }; }
+		Vect2I& operator*=(const int& rm);
 		//Down
 		Vect2I operator/(const int& rm) const { return { x / rm, y / rm }; }
+		Vect2I& operator/=(const int& rm);
 
 		//Multiplication
 		Vect2I operator*(const Vect2I& rm) const { return { x * rm.x, y * rm.y }; }
+		Vect2I& operator*=(const Vect2I& rm);
 
 		//Division
 		Vect2I operator/(const Vect2I& rm) const { return { x / rm.x, y / rm.y }; }
+		Vect2I& operator/=(const Vect2I& rm);
 
 		//Boolean
 		bool operator==(const Vect2I& rm) const { return (x == rm.x && y == rm.y); }
@@ -112,6 +126,8 @@ using std::uniform_int_distribution;
 		Vector2 toRaylib() const { return { (float)x, (float)y }; }
 	};
 
+	// No need of them for this 2d engine vvv
+	/*
 	struct Vect3F
 	{
 		float x;
@@ -217,6 +233,7 @@ using std::uniform_int_distribution;
 
 		Vector3 toRaylib() const { return { (float)x, (float)y, (float)z }; }
 	};
+	*/
 
 #pragma endregion
 
@@ -241,7 +258,7 @@ public:
 	static Vector2 Vector2Lerp(Vector2 a, Vector2 b, float t);
 	static Vector3 Vector2Lerp(Vector3 a, Vector3 b, float t);
 	static Vect2F Vect2FLerp(Vect2F a, Vect2F b, float t);
-	static Vect3F Vect3FLerp(Vect3F a, Vect3F b, float t);
+	//static Vect3F Vect3FLerp(Vect3F a, Vect3F b, float t);
 
 	static int RandInt(int min, int max);
 };
