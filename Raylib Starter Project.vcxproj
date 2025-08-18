@@ -110,6 +110,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\raylib;$(SolutionDir)\raylib\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,17 +137,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssetBank.cpp" />
-    <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="Box.cpp" />
+    <ClCompile Include="Cam2D.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameActor.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Render2D.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetBank.h" />
-    <ClInclude Include="Ball.h" />
+    <ClInclude Include="Box.h" />
+    <ClInclude Include="Cam2D.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GameActor.h" />
+    <ClInclude Include="Render2D.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

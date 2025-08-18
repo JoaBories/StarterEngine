@@ -1,0 +1,91 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "MSVC Code Analysis",
+          "version": "14.44.35214.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/main.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "f7ce29c79f7d2f9942727568fff79ffb2d04c5486ecde9cc8477a611d2f47c28"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/raylib/raylib.h"
+          },
+          "hashes": {
+            "sha-256": "baf9ba35d0f3af14ba55e67b98b7678870b3795b7fd038de04fdda9a426ef9dd"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/engine.h"
+          },
+          "hashes": {
+            "sha-256": "0d571eb98cad0653ed71549afb71621c9b05e69f161aa3a24714b7fa6f77a660"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/assetbank.h"
+          },
+          "hashes": {
+            "sha-256": "1a118011122ce1d22d756d64dad4b480dcfdd492706c439351a1a2f535998432"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/utils.h"
+          },
+          "hashes": {
+            "sha-256": "85075d91f4ec8bf97d902757ad1b3bf4dcf1ade164067ce41bad862fa1061608"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/cam2d.h"
+          },
+          "hashes": {
+            "sha-256": "6836e462b0d85b49e3c1caa20cb8a71582258156ba0a12ed95d2855989ebcb3f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/gameactor.h"
+          },
+          "hashes": {
+            "sha-256": "f75035611dcf3515482a8b19b3183edd63a99f3befe00518445bd467f2a00565"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/box.h"
+          },
+          "hashes": {
+            "sha-256": "74ec9862a5aa90e1d65d30a66fcf17571e6149768d1b2761520d2284e1900f30"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 #include <raylib.h>
 
 #include "Utils.h"
+using Struct::Vect2I;
 
 #include <string>
 #include <map>
@@ -11,6 +12,9 @@ using std::string;
 
 #include <filesystem>
 namespace fs = std::filesystem;
+
+#include <iostream>
+using std::cout, std::endl;
 
 struct TextureEntry
 {
@@ -60,26 +64,13 @@ private:
 	void LoadAnAsset(fs::path filePath, AssetType type);
 	void FetchAnAsset(fs::path filePath, AssetType type);
 
-	static AssetBank* mInstance;
+	static AssetBank* instance;
 
 public:
 	AssetBank() = default;
 	~AssetBank() = default;
 
-	static AssetBank* GetInstance()
-	{
-		if (!mInstance)
-		{
-			mInstance = new AssetBank();
-		}
-		return mInstance;
-	}
-
-	void Init()
-	{
-		mErrorTexture = new Texture(LoadTexture("resources/Error.png"));
-		FetchAll();
-	}
+	void Init();
 
 	void SearchAFolder(fs::path folderPath);
 	void SearchAFolderFor(fs::path folderPath, AssetType forWhat);
@@ -96,5 +87,7 @@ public:
 	bool LoadATexture(string textureName);
 	FontEntry* GetAFont(string fontName);
 	bool LoadAFont(string fontName);
+
+	static AssetBank* GetInstance();
 };
 

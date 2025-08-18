@@ -7,15 +7,10 @@ void UpdateDraw();
 void Update();
 void Draw();
 
-#include <iostream>
-#include <fstream>
-using std::ifstream, std::ofstream;
-using std::cout, std::endl;
-
 Engine engine;
 
-int screenHeight = 480;
-int screenWidth = 480;
+int screenHeight = 600;
+int screenWidth = 700;
 
 Color backgroundColor = BLACK;
 
@@ -37,7 +32,7 @@ int main() {
 
 void Init()
 {
-    InitWindow(screenHeight, screenWidth, gameName);
+    InitWindow(screenWidth, screenHeight, gameName);
     SetTargetFPS(60);
 
     engine.Init();

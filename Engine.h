@@ -1,20 +1,22 @@
 #pragma once
 #include "AssetBank.h"
-
-#include "Ball.h"
+#include "Cam2D.h"
+#include "GameActor.h"
+#include "Box.h"
 
 class Engine
 {
 private :
 
-	int mBallCount;
-
+	AssetBank* mAssetBank;
+	Cam2D* mCamera;
 
 public :
-	Engine();
+	Engine() = default;
 	~Engine();
 
 	void Init();
+	void InitActors();
 
 	void Update();
 	void UpdateActors();

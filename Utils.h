@@ -6,12 +6,21 @@ using std::random_device;
 using std::mt19937;
 using std::uniform_int_distribution;
 
+#include <iostream>
+
 #include <cmath>
 
-#pragma region Structs
+#include <vector>
+using std::vector;
 
-// rm for right member
+// Note : 
+// -rm for right member
+// -i use rotation in degrees (unless otherwise specified)
+// -i use float (unless otherwise specified)
 
+namespace Struct {
+
+	//Vector2 with lot of function and operators for easy use | Int version if needed for integral coordinates
 	struct Vect2F
 	{
 		float x;
@@ -25,51 +34,56 @@ using std::uniform_int_distribution;
 		static const Vect2F left;
 
 		Vect2F() = default;
-		Vect2F(float x_, float y_) : x{ x_ }, y{ y_ } {}
-		Vect2F(Vector2 vector2_) : x{ vector2_.x }, y{ vector2_.y } {}
+		inline Vect2F(float x_, float y_) : x{ x_ }, y{ y_ } {}
+		inline Vect2F(Vector2 vector2_) : x{ vector2_.x }, y{ vector2_.y } {}
 
 		//Addition
-		Vect2F operator+(const Vect2F& rm) const { return { x + rm.x, y + rm.y }; }
-		Vect2F& operator+=(const Vect2F& rm);
+		inline Vect2F operator+(const Vect2F& rm) const { return { x + rm.x, y + rm.y }; }
+		inline Vect2F& operator+=(const Vect2F& rm)		{ x += rm.x; y += rm.y; return *this; };
 
 		//Substraction
-		Vect2F operator-(const Vect2F& rm) const { return { x - rm.x, y - rm.y }; }
-		Vect2F& operator-=(const Vect2F& rm);
+		inline Vect2F operator-(const Vect2F& rm) const	{ return { x - rm.x, y - rm.y }; }
+		inline Vect2F& operator-=(const Vect2F& rm)		{ x -= rm.x; y -= rm.y; return *this; };
 
-		//Scale
-		//Up
-		Vect2F operator*(const float& rm) const { return { x * rm, y * rm }; }
-		Vect2F& operator*=(const float& rm);
-		Vect2F operator*(const int& rm) const { return { x * rm, y * rm }; }
-		Vect2F& operator*=(const int& rm);
-		//Down
-		Vect2F operator/(const float& rm) const { return { x / rm, y / rm }; }
-		Vect2F& operator/=(const float& rm);
-		Vect2F operator/(const int& rm) const { return { x / rm, y / rm }; }
-		Vect2F& operator/=(const int& rm);
+		//Negation
+		inline Vect2F operator-() const					{ return { -x, -y }; };
+
+		//Scale Up
+		inline Vect2F operator*(const float& rm) const	{ return { x * rm, y * rm }; }
+		inline Vect2F& operator*=(const float& rm)		{ x *= x; y *= y; return *this; };
+		inline Vect2F operator*(const int& rm) const	{ return { x * rm, y * rm }; }
+		inline Vect2F& operator*=(const int& rm)		{ x *= x; y *= y; return *this; };
+
+		//Scale Down
+		inline Vect2F operator/(const float& rm) const	{ return { x / rm, y / rm }; }
+		inline Vect2F& operator/=(const float& rm)		{ x /= x; y /= y; return *this; };
+		inline Vect2F operator/(const int& rm) const	{ return { x / rm, y / rm }; }
+		inline Vect2F& operator/=(const int& rm)		{ x /= x; y /= y; return *this; };
 
 		//Multiplication
-		Vect2F operator*(const Vect2F& rm) const { return { x * rm.x, y * rm.y }; }
-		Vect2F& operator*=(const Vect2F& rm);
+		inline Vect2F operator*(const Vect2F& rm) const { return { x * rm.x, y * rm.y }; }
+		inline Vect2F& operator*=(const Vect2F& rm)		{ x *= rm.x; y *= rm.y; return *this; };
 
 		//Division
-		Vect2F operator/(const Vect2F& rm) const { return { x / rm.x, y / rm.y }; }
-		Vect2F& operator/=(const Vect2F& rm);
+		inline Vect2F operator/(const Vect2F& rm) const { return { x / rm.x, y / rm.y }; }
+		inline Vect2F& operator/=(const Vect2F& rm)		{ x /= rm.x; y /= rm.y; return *this; };
 
 		//Boolean
 		bool operator==(const Vect2F& rm) const;
-		bool operator!=(const Vect2F& rm) const { return !(*this == rm); }
+		inline bool operator!=(const Vect2F& rm) const	{ return !(*this == rm); }
 
 		//Functions
-		float dot(const Vect2F& other) const { return x * other.x + y * other.y; }
+		inline float dot(const Vect2F& other) const		{ return x * other.x + y * other.y; }
 
-		float sqrLength() const { return x * x + y * y; }
-		float length() const { return sqrtf(this->sqrLength()); }
+		float getRot() const;
+
+		inline float sqrLength() const					{ return x * x + y * y; }
+		inline float length() const						{ return sqrtf(sqrLength()); }
 
 		Vect2F absolute() const;
 		Vect2F normalized() const;
 
-		Vector2 toRaylib() const { return { x, y }; }
+		inline Vector2 toRaylib() const					{ return { x, y }; }
 	};
 
 	struct Vect2I
@@ -85,181 +99,132 @@ using std::uniform_int_distribution;
 		static const Vect2I left;
 
 		Vect2I() = default;
-		Vect2I(int x_, int y_) : x{ x_ }, y{ y_ } {}
+		inline Vect2I(int x_, int y_) : x{ x_ }, y{ y_ } {}
 
 		//Addition
-		Vect2I operator+(const Vect2I& rm) const { return { x + rm.x, y + rm.y }; }
-		Vect2I& operator+=(const Vect2I& rm);
+		inline Vect2I operator+(const Vect2I& rm) const { return { x + rm.x, y + rm.y }; }
+		inline Vect2I& operator+=(const Vect2I& rm)		{ x += rm.x; y += rm.x; return *this; };
 
 		//Substraction
-		Vect2I operator-(const Vect2I& rm) const { return { x - rm.x, y - rm.y }; }
-		Vect2I& operator-=(const Vect2I& rm);
+		inline Vect2I operator-(const Vect2I& rm) const	{ return { x - rm.x, y - rm.y }; }
+		inline Vect2I& operator-=(const Vect2I& rm)		{ x -= rm.x; y -= rm.x; return *this; };
 
-		//Scale
-		//Up
-		Vect2I operator*(const int& rm) const { return { x * rm, y * rm }; }
-		Vect2I& operator*=(const int& rm);
-		//Down
-		Vect2I operator/(const int& rm) const { return { x / rm, y / rm }; }
-		Vect2I& operator/=(const int& rm);
+		//Negation
+		inline Vect2I operator-() const { return { -x, -y }; };
+
+		//Scale Up
+		inline Vect2I operator*(const int& rm) const	{ return { x * rm, y * rm }; }
+		inline Vect2I& operator*=(const int& rm)		{ x *= rm; y *= rm; return *this; };
+
+		//Scale Down
+		inline Vect2I operator/(const int& rm) const	{ return { x / rm, y / rm }; }
+		inline Vect2I& operator/=(const int& rm)		{ x /= rm; y /= rm; return *this; };
 
 		//Multiplication
-		Vect2I operator*(const Vect2I& rm) const { return { x * rm.x, y * rm.y }; }
-		Vect2I& operator*=(const Vect2I& rm);
+		inline Vect2I operator*(const Vect2I& rm) const { return { x * rm.x, y * rm.y }; }
+		inline Vect2I& operator*=(const Vect2I& rm)		{ x *= rm.x; y *= rm.x; return *this; };
 
 		//Division
-		Vect2I operator/(const Vect2I& rm) const { return { x / rm.x, y / rm.y }; }
-		Vect2I& operator/=(const Vect2I& rm);
+		inline Vect2I operator/(const Vect2I& rm) const { return { x / rm.x, y / rm.y }; }
+		inline Vect2I& operator/=(const Vect2I& rm)		{ x /= rm.x; y /= rm.x; return *this; };
 
 		//Boolean
-		bool operator==(const Vect2I& rm) const { return (x == rm.x && y == rm.y); }
-		bool operator!=(const Vect2I& rm) const { return !(*this == rm); }
+		inline bool operator==(const Vect2I& rm) const	{ return (x == rm.x && y == rm.y); }
+		inline bool operator!=(const Vect2I& rm) const	{ return !(*this == rm); }
 
 		//Functions
-		int dot(const Vect2I& other) const { return x * other.x + y * other.y; }
+		inline int dot(const Vect2I& other) const		{ return x * other.x + y * other.y; }
 
-		int sqrLength() const { return x * x + y * y; }
-		float length() const { return sqrtf((float)this->sqrLength()); }
+		float getRot() const;
+
+		inline int sqrLength() const					{ return x * x + y * y; }
+		inline float length() const						{ return sqrtf((float)sqrLength()); }
 
 		Vect2I absolute() const;
 
-		Vector2 toRaylib() const { return { (float)x, (float)y }; }
+		inline Vector2 toRaylib() const					{ return { (float)x, (float)y }; }
 	};
 
-	// No need of them for this 2d engine vvv
-	/*
-	struct Vect3F
+	//Handle Collision infos
+	struct Collision
 	{
-		float x;
-		float y;
-		float z;
+		bool collided;
+		Vect2F axis;
+		float overlap;
 
-		static const Vect3F zero;
-		static const Vect3F one;
-		static const Vect3F forward;
-		static const Vect3F back;
-		static const Vect3F up;
-		static const Vect3F down;
-		static const Vect3F right;
-		static const Vect3F left;
+		inline Vect2F getForce() const { return axis * overlap; };
 
-		Vect3F() = default;
-		Vect3F(float x_, float y_, float z_) : x{ x_ }, y{ y_ }, z{ z_ } {}
-		Vect3F(Vector3 vector3_) : x{ vector3_.x }, y{ vector3_.y }, z{ vector3_.z } {}
-
-		//Addition
-		Vect3F operator+(const Vect3F& rm) const { return { x + rm.x, y + rm.y, z + rm.z }; }
-
-		//Substraction
-		Vect3F operator-(const Vect3F& rm) const { return { x - rm.x, y - rm.y, z - rm.z }; }
-
-		//Scale
-		//Up
-		Vect3F operator*(const float& rm) const { return { x * rm, y * rm, z * rm }; }
-		Vect3F operator*(const int& rm) const { return { x * rm, y * rm, z * rm }; }
-		//Down
-		Vect3F operator/(const float& rm) const { return { x / rm, y / rm, z / rm }; }
-		Vect3F operator/(const int& rm) const { return { x / rm, y / rm, z / rm }; }
-
-		//Multiplication
-		Vect3F operator*(const Vect3F& rm) const { return { x * rm.x, y * rm.y, z * rm.z }; }
-
-		//Division
-		Vect3F operator/(const Vect3F& rm) const { return { x / rm.x, y / rm.y, z / rm.z }; }
-
-		//Boolean
-		bool operator==(const Vect3F& rm) const;
-		bool operator!=(const Vect3F& rm) const { return !(*this == rm); }
-
-		//Functions
-		float dot(const Vect3F& other) const { return x * other.x + y * other.y + z * other.z; }
-
-		float sqrLength() const { return x * x + y * y + z * z; }
-		float length() const { return sqrtf(this->sqrLength()); }
-
-		Vect3F absolute() const;
-		Vect3F normalized() const;
-
-		Vector3 toRaylib() const { return { x, y, z }; }
+		inline explicit operator bool() const { return collided; };
 	};
 
-	struct Vect3I
+	//Simple Transform with : position / scale / rotation for 2d objects
+	struct Transform2D
 	{
-		int x;
-		int y;
-		int z;
-
-		static const Vect3I zero;
-		static const Vect3I one;
-		static const Vect3I forward;
-		static const Vect3I back;
-		static const Vect3I up;
-		static const Vect3I down;
-		static const Vect3I right;
-		static const Vect3I left;
-
-		Vect3I() = default;
-		Vect3I(int x_, int y_, int z_) : x{ x_ }, y{ y_ }, z{ z_ } {}
-
-		//Addition
-		Vect3I operator+(const Vect3I& rm) const { return { x + rm.x, y + rm.y, z + rm.z }; }
-
-		//Substraction
-		Vect3I operator-(const Vect3I& rm) const { return { x - rm.x, y - rm.y, z - rm.z }; }
-
-		//Scale
-		//Up
-		Vect3I operator*(const int& rm) const { return { x * rm, y * rm, z * rm }; }
-		//Down
-		Vect3I operator/(const int& rm) const { return { x / rm, y / rm, z / rm }; }
-
-		//Multiplication
-		Vect3I operator*(const Vect3I& rm) const { return { x * rm.x, y * rm.y, z * rm.z }; }
-
-		//Division
-		Vect3I operator/(const Vect3I& rm) const { return { x / rm.x, y / rm.y, z / rm.z }; }
-
-		//Boolean
-		bool operator==(const Vect3I& rm) const { return (x == rm.x && y == rm.y && z == rm.z); }
-		bool operator!=(const Vect3I& rm) const { return !(*this == rm); }
-
-		//Functions
-		int dot(const Vect3I& other) const { return x * other.x + y * other.y + z * other.z; }
-
-		int sqrLength() const { return x * x + y * y + z * z; }
-		float length() const { return sqrtf((float)this->sqrLength()); }
-
-		Vect3I absolute() const;
-
-		Vector3 toRaylib() const { return { (float)x, (float)y, (float)z }; }
+		Vect2F position = Vect2F::zero;
+		Vect2F scale = Vect2F::one;
+		float rotation;
 	};
-	*/
 
-#pragma endregion
+	//Oriented Rectangle struct with Collision | origin is the center
+	struct Rect2
+	{
+		Vect2F center;
+		Vect2F halfSize;
+		float rotation;
 
-class Utils
-{
+		vector<Vect2F> getCorners() const;
 
-private:
-	Utils() = default;
-	~Utils() = default;
+		Collision CheckAABB(const Rect2& other) const;
 
-public:
-	//Math functions
-	static float Min(float a, float b);
-	static float Max(float a, float b);
-	static float Clamp(float value, float min, float max);
-	static float Abs(float value);
-	static float Sign(float value);
+		bool ContainPoint(const Vect2F& point) const;
 
-	static bool nearlyEqual(const float a, const float b);
+		Collision CheckOBB(const Rect2& other) const;
 
-	static float Lerp(float a, float b, float t);
-	static Vector2 Vector2Lerp(Vector2 a, Vector2 b, float t);
-	static Vector3 Vector2Lerp(Vector3 a, Vector3 b, float t);
-	static Vect2F Vect2FLerp(Vect2F a, Vect2F b, float t);
-	//static Vect3F Vect3FLerp(Vect3F a, Vect3F b, float t);
+		inline Rect2 toObjectSpace(const Transform2D& transform) { return { transform.position + center, transform.scale * halfSize, transform.rotation + rotation }; }; // use the Rect2 offset with the object Transform
 
-	static int RandInt(int min, int max);
+		inline Rectangle toRaylib() const { return { center.x - halfSize.x, center.y - halfSize.y, halfSize.x * 2, halfSize.y * 2 }; } // ignore rotation
+	};
+
+	//Write and Read Operators
+
+	//Vect2F
+	inline std::ostream& operator<<(std::ostream& os, const Vect2F& v) { os << v.x << " " << v.y; return os; }
+	inline std::istream& operator>>(std::istream& is, Vect2F& v) { is >> v.x >> v.y; return is; }
+	//Vect2I
+	inline std::ostream& operator<<(std::ostream& os, const Vect2I& v) { os << v.x << " " << v.y; return os; }
+	inline std::istream& operator>>(std::istream& is, Vect2I& v) { is >> v.x >> v.y; return is; }
+}
+
+using Struct::Vect2F;
+
+namespace MathUtils {
+
+	template <typename T>
+	inline T Min(T a, T b)										{ return (a <= b) ? a : b; };
+
+	template <typename T>
+	inline T Max(T a, T b)										{ return (a >= b) ? a : b; };
+	
+	template <typename T>
+	inline T Clamp(T value, T min, T max)						{ return Max(Min(value, max), min); };
+	
+	template <typename T>
+	inline T Abs(T value)										{ return (value < 0) ? -value : value; };
+	
+	template <typename T>
+	inline T Sign(T value)										{ return (value > 0) ? T(1) : (value < 0 ? T(-1) : T(0)); };
+
+	template <typename T>
+	inline T Lerp(T a, T b, T t)								{ return a + (b - a) * Clamp(t, T(0), T(1)); };
+
+	inline Vector2 Vector2Lerp(Vector2 a, Vector2 b, float t)	{ return { Lerp(a.x, b.x, t), Lerp(a.y, b.y, t) }; };
+	inline Vect2F Vect2FLerp(Vect2F a, Vect2F b, float t)		{ return {Lerp(a.x, b.x, t), Lerp(a.y, b.y, t)}; };
+
+	Vect2F Vect2FromRot(float rot);
+
+	float OverlapOnAxis(const vector<Vect2F>& a,const vector<Vect2F>& b, Vect2F axis);
+	
+	bool NearlyEqual(const float a, const float b);
+
+	int RandInt(int min, int max);
 };
-

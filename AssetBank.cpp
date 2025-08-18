@@ -1,11 +1,9 @@
 #include "AssetBank.h"
 
-#include <iostream>
 #include <fstream>
 using std::ifstream, std::ofstream;
-using std::cout, std::endl;
 
-AssetBank* AssetBank::mInstance = nullptr;
+AssetBank* AssetBank::instance = nullptr;
 
 TextureEntry::TextureEntry(Texture* text, string name):
 	texturePtr{text},
@@ -190,6 +188,12 @@ void AssetBank::FetchAnAsset(fs::path filePath, AssetType type)
 	}
 }
 
+void AssetBank::Init()
+{
+	mErrorTexture = new Texture(LoadTexture("resources/Error.png"));
+	FetchAll();
+}
+
 void AssetBank::SearchAFolder(fs::path folderPath)
 {
 	for (auto& entry : fs::directory_iterator(folderPath))
@@ -344,4 +348,12 @@ bool AssetBank::LoadAFont(string fontName)
 	}
 }
 
+AssetBank* AssetBank::GetInstance()
+{
+	if (!instance)
+	{
+		instance = new AssetBank();
+	}
 
+	return instance;
+}

@@ -1,0 +1,59 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "MSVC Code Analysis",
+          "version": "14.44.35214.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/cam2d.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "186af76f5e5330e0fd2702b867b0f51c7bac6f777645313fd60a75bf20ea8340"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/cam2d.h"
+          },
+          "hashes": {
+            "sha-256": "6836e462b0d85b49e3c1caa20cb8a71582258156ba0a12ed95d2855989ebcb3f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/utils.h"
+          },
+          "hashes": {
+            "sha-256": "85075d91f4ec8bf97d902757ad1b3bf4dcf1ade164067ce41bad862fa1061608"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/joabo/raylibstarterproject/raylib/raylib.h"
+          },
+          "hashes": {
+            "sha-256": "baf9ba35d0f3af14ba55e67b98b7678870b3795b7fd038de04fdda9a426ef9dd"
+          }
+        }
+      ]
+    }
+  ]
+}

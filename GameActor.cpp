@@ -2,8 +2,7 @@
 
 map<int, vector<GameActor*>> GameActor::mActorLogicList;
 map<int, vector<GameActor*>> GameActor::mActorRenderList;
-
-vector<GameActor*> GameActor::mPendingDestroy;
+map<string, vector<GameActor*>> GameActor::mActorTagMap;
 
 void GameActor::AddActorToRenderList(int renderPriority, GameActor* actor)
 {
@@ -29,31 +28,142 @@ void GameActor::AddActorToLogicList(int logicPriority, GameActor* actor)
 	}
 }
 
-GameActor::GameActor():
+void GameActor::AddActorToTagMap(string tag, GameActor* actor)
+{
+	if (mActorTagMap.find(tag) == mActorTagMap.end())
+	{
+		mActorTagMap[tag] = vector<GameActor*>{ actor };
+	}
+	else
+	{
+		mActorTagMap[tag].push_back(actor);
+	}
+}
+
+void GameActor::KillActors()
+{
+	if (mActorLogicList.empty())
+	{
+		return;
+	}
+
+	for (auto& actorList : mActorLogicList)
+	{
+		for (size_t i = 0; i < actorList.second.size(); i++)
+		{
+			if (actorList.second[i]->ShouldBeDestroyed())
+			{
+				delete actorList.second[i];
+
+				actorList.second.erase(actorList.second.begin() + i);
+			};
+		}
+	}
+
+	if (mActorRenderList.empty())
+	{
+		return;
+	}
+
+	for (auto& actorList : mActorRenderList)
+	{
+		for (size_t i = 0; i < actorList.second.size(); i++)
+		{
+			if (actorList.second[i]->ShouldBeDestroyed())
+			{
+				delete actorList.second[i];
+
+				actorList.second.erase(actorList.second.begin() + i);
+			};
+		}
+	}
+
+	if (mActorTagMap.empty())
+	{
+		return;
+	}
+
+	for (auto& actorList : mActorTagMap)
+	{
+		for (size_t i = 0; i < actorList.second.size(); i++)
+		{
+			if (actorList.second[i]->ShouldBeDestroyed())
+			{
+				delete actorList.second[i];
+
+				actorList.second.erase(actorList.second.begin() + i);
+			};
+		}
+	}
+}
+
+GameActor::GameActor() :
 	mLogicPriority{ 0 },
 	mRenderPriority{ 0 },
+	mPendingDestroy{ false },
 	mTransform{},
+	mTag{ "Default" },
 	mActive{ true }
 {
-	AddActorToLogicList(0, this);
-	AddActorToRenderList(0, this);
+	AddActorToLogicList(mLogicPriority, this);
+	AddActorToRenderList(mRenderPriority, this);
+	AddActorToTagMap(mTag, this);
 }
 
-GameActor::~GameActor()
-{
-}
-
-GameActor::GameActor(int logicPriority, int renderPriority, Transform2D transform):
+GameActor::GameActor(int logicPriority, int renderPriority, Transform2D transform, string tag):
 	mLogicPriority{ logicPriority },
 	mRenderPriority{ renderPriority },
+	mPendingDestroy{ false },
 	mTransform{ transform },
+	mTag{ tag },
 	mActive{ true }
 {
 	AddActorToLogicList(logicPriority, this);
 	AddActorToRenderList(renderPriority, this);
+	AddActorToTagMap(mTag, this);
 }
 
 void GameActor::Destroy()
 {
-	mPendingDestroy.push_back(this);
+	mPendingDestroy = true;
+}
+
+Transform2D GameActor::GetTransform() const
+{
+	return mTransform;
+}
+
+void GameActor::SetTransform(Transform2D transform)
+{
+	mTransform = transform;
+}
+
+string GameActor::GetTag() const
+{
+	return mTag;
+}
+
+vector<GameActor*> GameActor::GetActorsByTag(string tag)
+{
+	if (mActorTagMap.find(tag) == mActorTagMap.end())
+	{
+		return vector<GameActor*>{};
+	}
+
+	return mActorTagMap[tag];
+}
+
+bool GameActor::IsActive() const
+{
+	return mActive;
+}
+
+void GameActor::SetActive(bool active)
+{
+	mActive = active;
+}
+
+bool GameActor::ShouldBeDestroyed()
+{
+	return mPendingDestroy;
 }

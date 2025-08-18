@@ -1,31 +1,56 @@
 #include "Engine.h"
 
-Engine::Engine()
-{
-}
-
 Engine::~Engine()
 {
+	for (auto& actorList : GameActor::mActorLogicList)
+	{
+		for (auto& actor : actorList.second)
+		{
+			delete actor;
+		}
+	}
+
+	GameActor::mActorLogicList.clear();
+	GameActor::mActorRenderList.clear();
 }
 
 void Engine::Init()
 {
-	AssetBank::GetInstance()->Init();
+	mAssetBank = AssetBank::GetInstance();
+	mCamera = Cam2D::GetInstance();
+
+	mAssetBank->Init();
+
+	InitActors();
+	
+	new Box(1, 10.0f, { 30, 30 }, { { 300, 200}, Vect2F::one, 0 });
+	new Box(2, 10.0f, { 30, 30 }, { { 400, 500}, Vect2F::one, 0 });
+	new Box(3, 10.0f, { 30, 30 }, { { 250, 400}, Vect2F::one, 0 });
+}
+
+void Engine::InitActors()
+{
+	if (GameActor::mActorLogicList.empty())
+	{
+		return;
+	}
+
+	for (auto& actorList : GameActor::mActorLogicList)
+	{
+		for (auto& actor : actorList.second)
+		{
+			actor->Init();
+		}
+	}
 }
 
 void Engine::Update()
 {
-	if (mBallCount < 4000) 
-	{
-		Vect2F startVel = { (float)Utils::RandInt(-100, 100), (float)Utils::RandInt(-100, 100) };
-		startVel = startVel.normalized() * 50;
-
-		new Ball(startVel, 10, WHITE);
-
-		mBallCount++;
-	}
+	mCamera->Update();
 
 	UpdateActors();
+
+	GameActor::KillActors();
 }
 
 void Engine::UpdateActors()
@@ -48,8 +73,7 @@ void Engine::Draw()
 {
 	DrawActors();
 
-	DrawText(std::to_string(mBallCount).c_str(), GetScreenWidth() / 2, GetScreenHeight() / 2, 30, GREEN);
-	DrawFPS(GetScreenWidth() / 2 - 20, GetScreenHeight() / 2 - 20);
+	DrawFPS(100, 100);
 }
 
 void Engine::DrawActors()
