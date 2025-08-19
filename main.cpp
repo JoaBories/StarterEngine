@@ -33,7 +33,7 @@ int main() {
 void Init()
 {
     InitWindow(screenWidth, screenHeight, gameName);
-    SetTargetFPS(60);
+    SetTargetFPS(300);
 
     engine.Init();
 }

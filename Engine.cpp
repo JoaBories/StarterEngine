@@ -1,5 +1,7 @@
 #include "Engine.h"
 
+using MathUtils::RandInt;
+
 Engine::~Engine()
 {
 	for (auto& actorList : GameActor::mActorLogicList)
@@ -12,6 +14,7 @@ Engine::~Engine()
 
 	GameActor::mActorLogicList.clear();
 	GameActor::mActorRenderList.clear();
+	GameActor::mActorTagMap.clear();
 }
 
 void Engine::Init()
@@ -21,11 +24,14 @@ void Engine::Init()
 
 	mAssetBank->Init();
 
-	InitActors();
-	
-	new Box(1, 10.0f, { 30, 30 }, { { 300, 200}, Vect2F::one, 0 });
-	new Box(2, 10.0f, { 30, 30 }, { { 400, 500}, Vect2F::one, 0 });
-	new Box(3, 10.0f, { 30, 30 }, { { 250, 400}, Vect2F::one, 0 });
+	InitActors(); // for actors created before (if there is)
+
+	GlobalVariables::EngineRunning = true;
+
+	for (int i = 0; i < 10000; i++)
+	{
+		new Box(0, { (float)RandInt(1, 30), (float)RandInt(1, 30) }, { { (float)RandInt(-300, 300), (float)RandInt(-300, 300)}, Vect2F::one, (float)RandInt(0,360)});
+	}
 }
 
 void Engine::InitActors()

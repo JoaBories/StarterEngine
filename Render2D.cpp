@@ -1,8 +1,43 @@
 #include "Render2D.h"
 
+using Struct::Collision;
+
+Rect2 Render2D::toScreenSpace(Rect2 actorSpaceRect) const
+{
+	Rect2 textureToScreen = Rect2();
+
+	Cam2D* camPtr = Cam2D::GetInstance();
+
+	textureToScreen.center = (actorSpaceRect.center - camPtr->GetPosition()) * camPtr->GetZoom() + Vect2F{(float)GetScreenWidth(), (float)GetScreenHeight()} * 0.5f;
+	textureToScreen.halfSize = actorSpaceRect.halfSize * camPtr->GetZoom();
+	textureToScreen.rotation = actorSpaceRect.rotation;
+
+	return textureToScreen;
+}
+
+bool Render2D::isVisible(Rect2 screenSpaceRect) const
+{
+	if (!GlobalVariables::TextureCulling)
+	{
+		return true;
+	}
+
+	vector<Vect2F> corners = screenSpaceRect.getCorners();
+
+	Rect2 camSpace = Cam2D::GetInstance()->GetSafeCamSpace();
+
+	for (const auto& corner : corners)
+	{
+		if (camSpace.ContainPoint(corner))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 Render2D::Render2D(Rect2 textureSpace):
-	mAssetBank{ nullptr },
-	mCamera{ nullptr },
 	mTexture{ nullptr },
 	mTextureSpace{ textureSpace }
 {
@@ -10,15 +45,12 @@ Render2D::Render2D(Rect2 textureSpace):
 
 void Render2D::Init(string textureName)
 {
-	mAssetBank = AssetBank::GetInstance();
-	mCamera = Cam2D::GetInstance();
-
-	mTexture = mAssetBank->GetATexture(textureName);
+	mTexture = AssetBank::GetInstance()->GetATexture(textureName);
 }
 
 void Render2D::ChangeTexture(string textureName)
 {
-	mTexture = mAssetBank->GetATexture(textureName);
+	mTexture = AssetBank::GetInstance()->GetATexture(textureName);
 }
 
 void Render2D::ChangeTextureSpace(Rect2 textureSpace)
@@ -26,27 +58,30 @@ void Render2D::ChangeTextureSpace(Rect2 textureSpace)
 	mTextureSpace = textureSpace;
 }
 
-Rect2 Render2D::GetTextureSpace(Rect2 textureSpace) const
+Rect2 Render2D::GetTextureSpace() const
 {
 	return mTextureSpace;
 }
 
-bool Render2D::ShouldBeDrawn(const Transform2D& objectTransform) const
+bool Render2D::ShouldBeDrawn(const Transform2D& gameActorTransform) const
 {
-	Rect2 objectSpace = { mTextureSpace.center + objectTransform.position, mTextureSpace.halfSize * objectTransform.scale, mTextureSpace.rotation + objectTransform.rotation };
-	Rect2 camSpace = mCamera->GetCamSpace();
+	Rect2 actorSpace = mTextureSpace.toObjectSpace(gameActorTransform);
+	Rect2 screenSpace = toScreenSpace(actorSpace);
 
-
-
-	return false;
+	return isVisible(screenSpace);
 }
 
-void Render2D::Draw(const Transform2D& objectTransform) const
+void Render2D::Draw(const Transform2D& gameActorTransform) const
 {
-	Rect2 objectSpace = { mTextureSpace.center + objectTransform.position, mTextureSpace.halfSize * objectTransform.scale, mTextureSpace.rotation + objectTransform.rotation };
+	Rect2 actorSpace = mTextureSpace.toObjectSpace(gameActorTransform);
+	Rect2 screenSpace = toScreenSpace(actorSpace);
 
-	if (ShouldBeDrawn(objectTransform))
+	if (isVisible(screenSpace))
 	{
-
+		Texture text = *mTexture->texturePtr;
+		Rectangle sourceRect = { 0,0, (float)text.width, (float)text.height };
+		Rectangle destRect = { screenSpace.center.x, screenSpace.center.y, screenSpace.halfSize.x * 2.0f, screenSpace.halfSize.y * 2.0f }; //actorSpace.toRaylib();
+		
+		DrawTexturePro(text, sourceRect, destRect, screenSpace.halfSize.toRaylib(), screenSpace.rotation, WHITE);
 	}
 }

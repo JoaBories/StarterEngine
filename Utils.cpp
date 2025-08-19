@@ -134,8 +134,8 @@ vector<Vect2F> Rect2::getCorners() const
 
 	corners[0] = center + right * halfSize.x + up * halfSize.y;
 	corners[1] = center + right * -halfSize.x + up * halfSize.y;
+	corners[3] = center + right * halfSize.x + up * -halfSize.y;
 	corners[2] = center + right * -halfSize.x + up * -halfSize.y;
-	corners[3] = center + right * halfSize.x + up * halfSize.y;
 
 	return corners;
 }
@@ -157,7 +157,7 @@ Collision Rect2::CheckAABB(const Rect2& other) const
 		overlap.x = MathUtils::Min(aMax.x, bMax.x) - MathUtils::Max(aMin.x, bMin.x);
 		overlap.y = MathUtils::Min(aMax.y, bMax.y) - MathUtils::Max(aMin.y, bMin.y);
 
-		if (overlap.x < overlap.y) 
+		if (overlap.x < overlap.y) // Getting minimal overlap and his axis
 		{
 			result.overlap = overlap.x;
 			result.axis = (center.x > other.center.x) ? Vect2F::right : Vect2F::left;
@@ -177,12 +177,63 @@ bool Struct::Rect2::ContainPoint(const Vect2F& point) const
 	Vect2F aMin = { center.x - halfSize.x, center.y - halfSize.y };
 	Vect2F aMax = { center.x + halfSize.x, center.y + halfSize.y };
 
+	//Same as AABB but there is just onepoint so the max and the min are the same
 	return point.x >= aMin.x && point.x <= aMax.x && point.y >= aMin.y && point.y <= aMax.y;
+}
+
+void Struct::Rect2::DrawDebug(float scale)
+{
+	DrawCircleV(center.toRaylib(), scale, RED);
+
+	vector<Vect2F> corners = getCorners();
+
+	for (const Vect2F& corner : corners)
+	{
+		DrawCircleV(corner.toRaylib(), scale * 0.5f, GREEN);
+	}
 }
 
 Collision Rect2::CheckOBB(const Rect2& other) const
 {
-	return Collision();
+	Collision result = Collision();
+
+	if (rotation == 0 && other.rotation == 0) // i can improve by using AABB for same rot rectangle or 90 rotated rectangles | i believe
+	{
+		result = CheckAABB(other); // more optimized
+	}
+	else
+	{
+		vector<Vect2F> aCorners = getCorners();
+		vector<Vect2F> bCorners = other.getCorners();
+
+		vector<Vect2F> axes;
+
+		axes.push_back((aCorners[0] - aCorners[1]).PerpendicularCW());	// 2 axes is enough for a rectangle
+		axes.push_back((aCorners[1] - aCorners[2]).PerpendicularCW()); 
+
+		axes.push_back((bCorners[0] - bCorners[1]).PerpendicularCW());
+		axes.push_back((bCorners[1] - bCorners[2]).PerpendicularCW());
+
+		for (const auto& axis : axes)									// Testing overlap on all axes. If there is overlap on all of them then there is collision
+		{
+			float overlap = MathUtils::OverlapOnAxis(aCorners, bCorners, axis);
+			
+			if (overlap < 0)
+			{
+				return result;
+			}
+			else if (overlap < result.overlap)							// Returning the minimal overlap and his axis 
+			{
+				result.axis = axis;
+				result.overlap = overlap;
+			}
+		}
+
+		result.collided = true;
+
+	}
+
+	return result;
 }
 
 #pragma endregion

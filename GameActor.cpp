@@ -1,10 +1,11 @@
 #include "GameActor.h"
+#include "GlobalVariables.h"
 
-map<int, vector<GameActor*>> GameActor::mActorLogicList;
-map<int, vector<GameActor*>> GameActor::mActorRenderList;
-map<string, vector<GameActor*>> GameActor::mActorTagMap;
+map<short, vector<GameActor*>> GameActor::mActorLogicList;
+map<short, vector<GameActor*>> GameActor::mActorRenderList;
+map<Tag, vector<GameActor*>> GameActor::mActorTagMap;
 
-void GameActor::AddActorToRenderList(int renderPriority, GameActor* actor)
+void GameActor::AddActorToRenderList(short renderPriority, GameActor* actor)
 {
 	if (mActorRenderList.find(renderPriority) == mActorRenderList.end()) 
 	{
@@ -16,7 +17,7 @@ void GameActor::AddActorToRenderList(int renderPriority, GameActor* actor)
 	}
 }
 
-void GameActor::AddActorToLogicList(int logicPriority, GameActor* actor)
+void GameActor::AddActorToLogicList(short logicPriority, GameActor* actor)
 {
 	if (mActorLogicList.find(logicPriority) == mActorLogicList.end())
 	{
@@ -28,7 +29,7 @@ void GameActor::AddActorToLogicList(int logicPriority, GameActor* actor)
 	}
 }
 
-void GameActor::AddActorToTagMap(string tag, GameActor* actor)
+void GameActor::AddActorToTagMap(Tag tag, GameActor* actor)
 {
 	if (mActorTagMap.find(tag) == mActorTagMap.end())
 	{
@@ -102,7 +103,7 @@ GameActor::GameActor() :
 	mRenderPriority{ 0 },
 	mPendingDestroy{ false },
 	mTransform{},
-	mTag{ "Default" },
+	mTag{ TagDefault },
 	mActive{ true }
 {
 	AddActorToLogicList(mLogicPriority, this);
@@ -110,7 +111,7 @@ GameActor::GameActor() :
 	AddActorToTagMap(mTag, this);
 }
 
-GameActor::GameActor(int logicPriority, int renderPriority, Transform2D transform, string tag):
+GameActor::GameActor(short logicPriority, short renderPriority, Transform2D transform, Tag tag):
 	mLogicPriority{ logicPriority },
 	mRenderPriority{ renderPriority },
 	mPendingDestroy{ false },
@@ -138,12 +139,12 @@ void GameActor::SetTransform(Transform2D transform)
 	mTransform = transform;
 }
 
-string GameActor::GetTag() const
+Tag GameActor::GetTag() const
 {
 	return mTag;
 }
 
-vector<GameActor*> GameActor::GetActorsByTag(string tag)
+vector<GameActor*> GameActor::GetActorsByTag(Tag tag)
 {
 	if (mActorTagMap.find(tag) == mActorTagMap.end())
 	{
@@ -163,7 +164,7 @@ void GameActor::SetActive(bool active)
 	mActive = active;
 }
 
-bool GameActor::ShouldBeDestroyed()
+bool GameActor::ShouldBeDestroyed() const
 {
 	return mPendingDestroy;
 }

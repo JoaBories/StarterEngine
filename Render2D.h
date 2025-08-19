@@ -12,12 +12,12 @@ class Render2D
 {
 
 private:
-	AssetBank* mAssetBank;
-	Cam2D* mCamera;
-
 	TextureEntry* mTexture;
 
 	Rect2 mTextureSpace; // offset center, texture size, offset rotation
+
+	Rect2 toScreenSpace(Rect2 actorSpaceRect) const;
+	bool isVisible(Rect2 screenSpaceRect) const;
 
 public:
 
@@ -31,9 +31,9 @@ public:
 	void ChangeTexture(string textureName);
 	void ChangeTextureSpace(Rect2 textureSpace);
 
-	Rect2 GetTextureSpace(Rect2 textureSpace) const;
+	Rect2 GetTextureSpace() const;
 
-	bool ShouldBeDrawn(const Transform2D& objectTransform) const;
-	void Draw(const Transform2D& objectTransform) const;
+	bool ShouldBeDrawn(const Transform2D& gameActorTransform) const;
+	void Draw(const Transform2D& gameActorTransform) const;
 };
 

@@ -4,24 +4,27 @@
 using Struct::Transform2D;
 
 #include <map>
-#include <vector>
-using std::map, std::vector;
+using std::map;
 
-using std::string;
+enum Tag
+{
+	TagDefault,
+	TagBox
+};
 
 class GameActor
 {
 
 private:
-	void AddActorToRenderList(int renderPriority, GameActor* actor);
-	void AddActorToLogicList(int logicPriority, GameActor* actor);
-	void AddActorToTagMap(string tag, GameActor* actor);
+	void AddActorToRenderList(short renderPriority, GameActor* actor);
+	void AddActorToLogicList(short logicPriority, GameActor* actor);
+	void AddActorToTagMap(Tag tag, GameActor* actor);
 
 protected:
-	int mLogicPriority;
-	int mRenderPriority;
+	short mLogicPriority;
+	short mRenderPriority;
 
-	string mTag;
+	Tag mTag;
 
 	Transform2D mTransform;
 
@@ -29,16 +32,16 @@ protected:
 	bool mActive = true;
 
 public:
-	static map<int, vector<GameActor*>> mActorLogicList;
-	static map<int, vector<GameActor*>> mActorRenderList;
-	static map<string, vector<GameActor*>> mActorTagMap;
+	static map<short, vector<GameActor*>> mActorLogicList;
+	static map<short, vector<GameActor*>> mActorRenderList;
+	static map<Tag, vector<GameActor*>> mActorTagMap;
 
 	static void KillActors();
 
 	GameActor();
 	~GameActor() = default;
 
-	GameActor(int logicPriority, int renderPriority, Transform2D transform, string tag);
+	GameActor(short logicPriority, short renderPriority, Transform2D transform, Tag tag);
 
 	void Destroy();
 
@@ -49,13 +52,13 @@ public:
 	Transform2D GetTransform() const;
 	void SetTransform(Transform2D transform);
 
-	string GetTag() const;
+	Tag GetTag() const;
 
-	vector<GameActor*> GetActorsByTag(string tag);
+	vector<GameActor*> GetActorsByTag(Tag tag);
 
 	bool IsActive() const;
 	void SetActive(bool active);
 
-	bool ShouldBeDestroyed();
+	bool ShouldBeDestroyed() const;
 };
 

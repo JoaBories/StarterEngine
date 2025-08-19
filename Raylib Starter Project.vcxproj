@@ -141,6 +141,7 @@
     <ClCompile Include="Cam2D.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameActor.cpp" />
+    <ClCompile Include="GlobalVariables.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Render2D.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Cam2D.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GameActor.h" />
+    <ClInclude Include="GlobalVariables.h" />
     <ClInclude Include="Render2D.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
