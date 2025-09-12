@@ -70,7 +70,6 @@ StyleCopReport.xml
 *_h.h
 *.ilk
 *.meta
-*.obj
 *.iobj
 *.pch
 *.pdb
@@ -392,3 +391,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+x64/Debug/RaylibStarterProject.exe
+RaylibSt.792081f7
