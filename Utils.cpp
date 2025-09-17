@@ -1,6 +1,5 @@
 #include "Utils.h"
 
-#include <iostream>
 using std::cout, std::endl;
 
 using Struct::Vect2F;
@@ -181,15 +180,19 @@ bool Struct::Rect2::ContainPoint(const Vect2F& point) const
 	return point.x >= aMin.x && point.x <= aMax.x && point.y >= aMin.y && point.y <= aMax.y;
 }
 
-void Struct::Rect2::DrawDebug(float scale)
+void Struct::Rect2::DrawDebug(float scale) const
 {
 	DrawCircleV(center.toRaylib(), scale, RED);
 
 	vector<Vect2F> corners = getCorners();
 
+	Vect2F& lastCorner = corners[3];
+
 	for (const Vect2F& corner : corners)
 	{
 		DrawCircleV(corner.toRaylib(), scale * 0.5f, GREEN);
+		DrawLineV(corner.toRaylib(), lastCorner.toRaylib(), GREEN);
+		lastCorner = corner;
 	}
 }
 

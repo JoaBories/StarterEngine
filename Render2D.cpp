@@ -1,7 +1,5 @@
 #include "Render2D.h"
 
-using Struct::Collision;
-
 Rect2 Render2D::toScreenSpace(Rect2 actorSpaceRect) const
 {
 	Rect2 textureToScreen = Rect2();

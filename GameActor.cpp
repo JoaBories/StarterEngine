@@ -41,7 +41,7 @@ void GameActor::AddActorToTagMap(Tag tag, GameActor* actor)
 	}
 }
 
-void GameActor::KillActors()
+void GameActor::KillPendingActors()
 {
 	if (mActorLogicList.empty())
 	{

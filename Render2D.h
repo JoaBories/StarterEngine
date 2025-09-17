@@ -3,7 +3,9 @@
 #include "Cam2D.h"
 #include "AssetBank.h"
 
-#include "GameActor.h"
+#include "Utils.h"
+using Struct::Transform2D;
+using Struct::Collision;
 
 #include <vector>
 using std::vector;

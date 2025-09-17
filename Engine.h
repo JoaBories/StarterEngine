@@ -2,7 +2,6 @@
 #include "AssetBank.h"
 #include "Cam2D.h"
 #include "GameActor.h"
-#include "Box.h"
 
 class Engine
 {

@@ -9,12 +9,12 @@ void Draw();
 
 Engine engine;
 
-int screenHeight = 600;
-int screenWidth = 700;
+int screenHeight = 600; // Window Size
+int screenWidth = 700;  //
 
 Color backgroundColor = BLACK;
 
-const char* gameName = "Starter Project";
+const char* gameName = "Starter Engine"; //Name of the window
 
 int main() {
 

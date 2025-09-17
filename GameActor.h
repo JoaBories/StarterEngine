@@ -8,8 +8,7 @@ using std::map;
 
 enum Tag
 {
-	TagDefault,
-	TagBox
+	TagDefault
 };
 
 class GameActor
@@ -32,12 +31,15 @@ protected:
 	bool mActive = true;
 
 public:
+	//Static for all GameActors
 	static map<short, vector<GameActor*>> mActorLogicList;
 	static map<short, vector<GameActor*>> mActorRenderList;
 	static map<Tag, vector<GameActor*>> mActorTagMap;
 
-	static void KillActors();
+	static vector<GameActor*> GetActorsByTag(Tag tag);
+	static void KillPendingActors();
 
+	//Public for object only
 	GameActor();
 	~GameActor() = default;
 
@@ -53,8 +55,6 @@ public:
 	void SetTransform(Transform2D transform);
 
 	Tag GetTag() const;
-
-	vector<GameActor*> GetActorsByTag(Tag tag);
 
 	bool IsActive() const;
 	void SetActive(bool active);

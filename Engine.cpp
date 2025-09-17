@@ -27,11 +27,6 @@ void Engine::Init()
 	InitActors(); // for actors created before (if there is)
 
 	GlobalVariables::EngineRunning = true;
-
-	for (int i = 0; i < 10000; i++)
-	{
-		new Box(0, { (float)RandInt(1, 30), (float)RandInt(1, 30) }, { { (float)RandInt(-300, 300), (float)RandInt(-300, 300)}, Vect2F::one, (float)RandInt(0,360)});
-	}
 }
 
 void Engine::InitActors()
@@ -56,7 +51,7 @@ void Engine::Update()
 
 	UpdateActors();
 
-	GameActor::KillActors();
+	GameActor::KillPendingActors();
 }
 
 void Engine::UpdateActors()
@@ -79,7 +74,10 @@ void Engine::Draw()
 {
 	DrawActors();
 
-	DrawFPS(100, 100);
+	if (GlobalVariables::ShowFPS)
+	{
+		DrawFPS(100, 100);
+	}
 }
 
 void Engine::DrawActors()

@@ -194,7 +194,7 @@ namespace Struct {
 
 		bool ContainPoint(const Vect2F& point) const;	// ignore rot
 
-		void DrawDebug(float scale); // Draw green points at corners and red point at center
+		void DrawDebug(float scale) const; // Draw green points at corners and red point at center
 
 		inline Rect2 toObjectSpace(const Transform2D& transform) const { return { transform.position + center, transform.scale * halfSize, transform.rotation + rotation }; }; // use the Rect2 offset with the object Transform
 
@@ -211,8 +211,6 @@ namespace Struct {
 	inline std::ostream& operator<<(std::ostream& os, const Vect2I& v) { os << v.x << " " << v.y; return os; }
 	inline std::istream& operator>>(std::istream& is, Vect2I& v) { is >> v.x >> v.y; return is; }
 }
-
-using Struct::Vect2F;
 
 namespace MathUtils {
 
@@ -234,9 +232,9 @@ namespace MathUtils {
 	template <typename T>
 	inline T Lerp(T a, T b, T t)								{ return a + (b - a) * Clamp(t, T(0), T(1)); };
 
-	inline Vector2 Vector2Lerp(Vector2 a, Vector2 b, float t)	{ return { Lerp(a.x, b.x, t), Lerp(a.y, b.y, t) }; };
-	inline Vect2F Vect2FLerp(Vect2F a, Vect2F b, float t)		{ return {Lerp(a.x, b.x, t), Lerp(a.y, b.y, t)}; };
-
+	using Struct::Vect2F;
+	inline Vect2F Vect2FLerp(Vect2F a, Vect2F b, float t)		{ return { Lerp(a.x, b.x, t), Lerp(a.y, b.y, t)}; };
+	
 	Vect2F Vect2FromRot(float rot);
 
 	float OverlapOnAxis(const vector<Vect2F>& a,const vector<Vect2F>& b, Vect2F axis);
