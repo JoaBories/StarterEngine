@@ -4,17 +4,19 @@ using MathUtils::RandInt;
 
 Engine::~Engine()
 {
-	for (auto& actorList : GameActor::mActorLogicList)
-	{
-		for (auto& actor : actorList.second)
-		{
-			delete actor;
-		}
-	}
+	//for (auto& actorList : GameActor::GetActorsLogic())
+	//{
+	//	for (auto& actor : actorList.second)
+	//	{
+	//		delete actor;
+	//	}
+	//}
 
-	GameActor::mActorLogicList.clear();
-	GameActor::mActorRenderList.clear();
-	GameActor::mActorTagMap.clear();
+	//GameActor::mActorLogicList.clear();
+	//GameActor::mActorRenderList.clear();
+	//GameActor::mActorTagMap.clear();
+
+	// have to reimplement this in gameactor
 }
 
 void Engine::Init()
@@ -31,12 +33,12 @@ void Engine::Init()
 
 void Engine::InitActors()
 {
-	if (GameActor::mActorLogicList.empty())
+	if (GameActor::GetActorsLogic().empty())
 	{
 		return;
 	}
 
-	for (auto& actorList : GameActor::mActorLogicList)
+	for (auto& actorList : GameActor::GetActorsLogic())
 	{
 		for (auto& actor : actorList.second)
 		{
@@ -56,12 +58,12 @@ void Engine::Update()
 
 void Engine::UpdateActors()
 {
-	if (GameActor::mActorLogicList.empty()) 
+	if (GameActor::GetActorsLogic().empty())
 	{
 		return;
 	}
 
-	for (auto& actorList : GameActor::mActorLogicList) 
+	for (auto& actorList : GameActor::GetActorsLogic())
 	{
 		for (auto& actor : actorList.second)
 		{
@@ -82,12 +84,12 @@ void Engine::Draw()
 
 void Engine::DrawActors()
 {
-	if (GameActor::mActorRenderList.empty())
+	if (GameActor::GetActorsRender().empty())
 	{
 		return;
 	}
 
-	for (auto& actorList : GameActor::mActorRenderList)
+	for (auto& actorList : GameActor::GetActorsRender())
 	{
 		for (auto& actor : actorList.second)
 		{

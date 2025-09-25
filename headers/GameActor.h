@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utils.h"
+#include "Util.h"
 using Struct::Transform2D;
 
 #include <map>
@@ -19,6 +19,10 @@ private:
 	void AddActorToLogicList(short logicPriority, GameActor* actor);
 	void AddActorToTagMap(Tag tag, GameActor* actor);
 
+	static map<short, vector<GameActor*>> mActorLogicList;
+	static map<short, vector<GameActor*>> mActorRenderList;
+	static map<Tag, vector<GameActor*>> mActorTagMap;
+
 protected:
 	short mLogicPriority;
 	short mRenderPriority;
@@ -32,12 +36,11 @@ protected:
 
 public:
 	//Static for all GameActors
-	static map<short, vector<GameActor*>> mActorLogicList;
-	static map<short, vector<GameActor*>> mActorRenderList;
-	static map<Tag, vector<GameActor*>> mActorTagMap;
-
 	static vector<GameActor*> GetActorsByTag(Tag tag);
 	static void KillPendingActors();
+
+	inline static map<short, vector<GameActor*>> GetActorsLogic() { return mActorLogicList; };
+	inline static map<short, vector<GameActor*>> GetActorsRender() { return mActorRenderList; };
 
 	//Public for object only
 	GameActor();

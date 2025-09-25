@@ -3,7 +3,7 @@
 #include "Cam2D.h"
 #include "AssetBank.h"
 
-#include "Utils.h"
+#include "Util.h"
 using Struct::Transform2D;
 using Struct::Collision;
 

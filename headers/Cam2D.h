@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utils.h"
+#include "Util.h"
 using Struct::Vect2F;
 using Struct::Rect2;
 

@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\raylib\source;$(SolutionDir)\raylib\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\raylib\source;$(SolutionDir)\raylib\external;%(AdditionalIncludeDirectories);$(SolutionDir)\sources;$(SolutionDir)\headers</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -138,23 +138,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AssetBank.cpp" />
-    <ClCompile Include="Cam2D.cpp" />
-    <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="GameActor.cpp" />
-    <ClCompile Include="GlobalVariables.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Render2D.cpp" />
-    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="sources\AssetBank.cpp" />
+    <ClCompile Include="sources\Cam2D.cpp" />
+    <ClCompile Include="sources\Engine.cpp" />
+    <ClCompile Include="sources\GameActor.cpp" />
+    <ClCompile Include="sources\GlobalVariables.cpp" />
+    <ClCompile Include="sources\Render2D.cpp" />
+    <ClCompile Include="sources\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AssetBank.h" />
-    <ClInclude Include="Cam2D.h" />
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="GameActor.h" />
-    <ClInclude Include="GlobalVariables.h" />
-    <ClInclude Include="Render2D.h" />
-    <ClInclude Include="Utils.h" />
+    <ClInclude Include="headers\AssetBank.h" />
+    <ClInclude Include="headers\Cam2D.h" />
+    <ClInclude Include="headers\Engine.h" />
+    <ClInclude Include="headers\GameActor.h" />
+    <ClInclude Include="headers\GlobalVariables.h" />
+    <ClInclude Include="headers\Render2D.h" />
+    <ClInclude Include="headers\Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,7 +2,7 @@
 
 #include <raylib.h>
 
-#include "Utils.h"
+#include "Util.h"
 using Struct::Vect2I;
 
 #include <string>
