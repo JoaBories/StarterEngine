@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GlobalVariables.h"
+
 #include "Util.h"
 using Struct::Transform2D;
 
@@ -8,7 +10,8 @@ using std::map;
 
 enum Tag
 {
-	TagDefault
+	TagDefault,
+	TagBird
 };
 
 class GameActor

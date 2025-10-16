@@ -1,6 +1,8 @@
 #include "Engine.h"
 
 using MathUtils::RandInt;
+using MathUtils::RandFloat;
+using MathUtils::RandVect2Normalized;
 
 Engine::~Engine()
 {
@@ -29,6 +31,12 @@ void Engine::Init()
 	InitActors(); // for actors created before (if there is)
 
 	GlobalVariables::EngineRunning = true;
+	//GlobalVariables::WindForce = RandVect2Normalized();
+
+	for (int i = 0; i < 100; i++)
+	{
+		new Bird({ (float)GetScreenWidth() / 2.0f, (float)GetScreenHeight() / 2.0f });
+	}
 }
 
 void Engine::InitActors()
@@ -50,6 +58,13 @@ void Engine::InitActors()
 void Engine::Update()
 {
 	mCamera->Update();
+
+	//int randI = RandInt(0, 1000);
+
+	//if (randI == 0)
+	//{
+	//	GlobalVariables::WindForce = RandVect2Normalized();
+	//}
 
 	UpdateActors();
 
@@ -75,6 +90,8 @@ void Engine::UpdateActors()
 void Engine::Draw()
 {
 	DrawActors();
+
+	dynamic_cast<Bird*>(GameActor::GetActorsByTag(TagBird)[0])->DrawDebug();
 
 	if (GlobalVariables::ShowFPS)
 	{

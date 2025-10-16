@@ -12,7 +12,7 @@ Engine engine;
 int screenHeight = 600; // Window Size
 int screenWidth = 700;  //
 
-Color backgroundColor = BLACK;
+Color backgroundColor = RAYWHITE;
 
 const char* gameName = "Starter Engine"; //Name of the window
 
@@ -32,8 +32,10 @@ int main() {
 
 void Init()
 {
+    srand(time(0));
+
     InitWindow(screenWidth, screenHeight, gameName);
-    SetTargetFPS(300);
+    SetTargetFPS(60);
 
     engine.Init();
 }

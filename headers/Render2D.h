@@ -2,6 +2,7 @@
 
 #include "Cam2D.h"
 #include "AssetBank.h"
+#include "GlobalVariables.h"
 
 #include "Util.h"
 using Struct::Transform2D;
