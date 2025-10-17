@@ -94,6 +94,11 @@ Vect2F Vect2F::absolute() const
 
 Vect2F Vect2F::normalized() const
 {
+	if (*this == Vect2F::zero)
+	{
+		return Vect2F::zero;
+	}
+
 	float l = length();
 	return { x / l, y / l };
 }

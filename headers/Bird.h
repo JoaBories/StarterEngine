@@ -16,10 +16,15 @@ protected :
 	float mAlignment;
 	float mCohesion;
 	float mFov;
-	Vect2F mAccel;
+	Vect2F mForce;
 
 	Collision GetScreenCollision();
 	void ResolveScreenCollisions();
+
+	void ResolveNeighborsRules();
+	void ResolveAlignment(vector<Bird*> neighbors);
+	void ResolveSeparation(vector<Bird*> neighbors);
+	void ResolveCohesion(vector<Bird*> neighbors);
 
 	vector<vector<Bird*>> GetNeighbors() const;
 
@@ -31,6 +36,7 @@ public :
 	Bird(Vect2F pos, float size = 5.0f);
 
 	inline float GetSize() const { return mSize; };
+	inline Vect2F GetVel() const { return mVelocity; };
 
 	void Init() override;
 	void Update() override;

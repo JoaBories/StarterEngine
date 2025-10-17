@@ -62,23 +62,80 @@ void Bird::ResolveScreenCollisions()
 		mVelocity *= {(coll.axis.x != 0) ? -1.0f : 1.0f, (coll.axis.y != 0) ? -1.0f : 1.0f};
 
 		//Resolve Force
-		mAccel *= {(coll.axis.x != 0) ? -1.0f : 1.0f, (coll.axis.y != 0) ? -1.0f : 1.0f};
+		mForce *= {(coll.axis.x != 0) ? -1.0f : 1.0f, (coll.axis.y != 0) ? -1.0f : 1.0f};
 	}
+}
+
+void Bird::ResolveNeighborsRules()
+{
+	vector<vector<Bird*>> allNeighbors = GetNeighbors();
+
+	if (allNeighbors[0].size() > 0)
+	{
+		ResolveSeparation(allNeighbors[0]);
+	}
+
+	if (allNeighbors[1].size() > 0)
+	{
+		ResolveAlignment(allNeighbors[1]);
+	}
+
+	if (allNeighbors[2].size() > 0)
+	{
+		ResolveCohesion(allNeighbors[2]);
+	}
+}
+
+void Bird::ResolveAlignment(vector<Bird*> neighbors)
+{
+	Vect2F force = Vect2F::zero;
+	Vect2F ttNeighborsVel = Vect2F::zero;
+
+	for (const Bird* neighbor : neighbors)
+	{
+		ttNeighborsVel += neighbor->GetVel();
+	}
+
+	force = ttNeighborsVel / (int)neighbors.size();
+
+	mForce += force.normalized();
+}
+
+void Bird::ResolveSeparation(vector<Bird*> neighbors)
+{
+	Vect2F force = Vect2F::zero;
+	Vect2F ttNeighborsDis = Vect2F::zero;
+
+	for (const Bird* neighbor : neighbors)
+	{
+		ttNeighborsDis += mTransform.position - neighbor->GetTransform().position;
+	}
+
+	mForce += ttNeighborsDis.normalized();
+}
+
+void Bird::ResolveCohesion(vector<Bird*> neighbors)
+{
+	Vect2F force = Vect2F::zero;
+	Vect2F ttNeighborsPos = Vect2F::zero;
+
+	for (const Bird* neighbor : neighbors)
+	{
+		ttNeighborsPos += mTransform.position - neighbor->GetTransform().position;
+	}
+
+	force = ttNeighborsPos / (int)neighbors.size() - mTransform.position;
+
+	mForce += force.normalized();
 }
 
 vector<vector<Bird*>> Bird::GetNeighbors() const
 {
-
-	///
-	/// Missing FOV
-	///
-
 	vector<vector<Bird*>> neighbors = { {}, {}, {} };
 
 	Vect2F normalizedVel = mVelocity.normalized();
 	
 	float dotTreshold = - (mFov / 180.0f - 1.0f);
-	std::cout << dotTreshold << std::endl;
 
 	for (GameActor* actor : GameActor::GetActorsByTag(TagBird))
 	{
@@ -127,7 +184,7 @@ Bird::Bird(Vect2F pos, float size):
 	mAlignment{ 50 },
 	mCohesion{ 100 },
 	mFov{ 300 },
-	mAccel{ Vect2F::zero }
+	mForce{ Vect2F::zero }
 {
 	mVelocity = RandVect2Normalized();
 }
@@ -140,9 +197,11 @@ void Bird::Update()
 {
 	ResolveScreenCollisions();
 
-	mAccel = GlobalVariables::WindForce;
+	mForce = GlobalVariables::WindForce;
 
-	mVelocity += mAccel * GetFrameTime();
+	ResolveNeighborsRules();
+
+	mVelocity = (mVelocity + mForce * GetFrameTime()).normalized();
 
 	mTransform.position += mVelocity * mSpeed * GetFrameTime();
 }
@@ -157,8 +216,8 @@ void Bird::DrawDebug() const
 	//Vel
 	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + mVelocity * 30).toRaylib(), 2.0f, GREEN);
 	
-	//Accel
-	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + mAccel * 30).toRaylib(), 2.0f, BLUE);
+	//Force
+	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + mForce * 30).toRaylib(), 2.0f, BLUE);
 
 	//Fov
 	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + Vect2FromRot(mVelocity.getRot() - mFov / 2) * 300).toRaylib(), 1.5f, DARKGRAY);
