@@ -98,7 +98,7 @@ void Bird::ResolveAlignment(vector<Bird*> neighbors)
 
 	force = ttNeighborsVel / (int)neighbors.size();
 
-	mForce += force.normalized();
+	mForce += force.normalized() * 0.6f;
 }
 
 void Bird::ResolveSeparation(vector<Bird*> neighbors)
@@ -121,12 +121,12 @@ void Bird::ResolveCohesion(vector<Bird*> neighbors)
 
 	for (const Bird* neighbor : neighbors)
 	{
-		ttNeighborsPos += mTransform.position - neighbor->GetTransform().position;
+		ttNeighborsPos += neighbor->GetTransform().position - mTransform.position;
 	}
 
-	force = ttNeighborsPos / (int)neighbors.size() - mTransform.position;
+	force = ttNeighborsPos / (int)neighbors.size();
 
-	mForce += force.normalized();
+	mForce += force.normalized() * 0.4f;
 }
 
 vector<vector<Bird*>> Bird::GetNeighbors() const
@@ -197,7 +197,7 @@ void Bird::Update()
 {
 	ResolveScreenCollisions();
 
-	mForce = GlobalVariables::WindForce;
+	mForce = Vect2F::zero;
 
 	ResolveNeighborsRules();
 
@@ -220,8 +220,8 @@ void Bird::DrawDebug() const
 	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + mForce * 30).toRaylib(), 2.0f, BLUE);
 
 	//Fov
-	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + Vect2FromRot(mVelocity.getRot() - mFov / 2) * 300).toRaylib(), 1.5f, DARKGRAY);
-	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + Vect2FromRot(mVelocity.getRot() + mFov / 2) * 300).toRaylib(), 1.5f, DARKGRAY);
+	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + Vect2FromRot(mVelocity.getRot() - mFov / 2) * 300).toRaylib(), 1.0f, DARKGRAY);
+	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + Vect2FromRot(mVelocity.getRot() + mFov / 2) * 300).toRaylib(), 1.0f, DARKGRAY);
 
 	//Neighbors
 	vector<vector<Bird*>> neighbors = GetNeighbors();

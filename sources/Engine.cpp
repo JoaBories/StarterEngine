@@ -31,11 +31,10 @@ void Engine::Init()
 	InitActors(); // for actors created before (if there is)
 
 	GlobalVariables::EngineRunning = true;
-	//GlobalVariables::WindForce = RandVect2Normalized();
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 500; i++)
 	{
-		new Bird({ (float)GetScreenWidth() / 2.0f, (float)GetScreenHeight() / 2.0f });
+		new Bird({ RandFloat(0, (float)GetScreenWidth()), RandFloat(0, (float)GetScreenHeight())});
 	}
 }
 
@@ -58,13 +57,6 @@ void Engine::InitActors()
 void Engine::Update()
 {
 	mCamera->Update();
-
-	//int randI = RandInt(0, 1000);
-
-	//if (randI == 0)
-	//{
-	//	GlobalVariables::WindForce = RandVect2Normalized();
-	//}
 
 	UpdateActors();
 
@@ -91,7 +83,7 @@ void Engine::Draw()
 {
 	DrawActors();
 
-	dynamic_cast<Bird*>(GameActor::GetActorsByTag(TagBird)[0])->DrawDebug();
+	//dynamic_cast<Bird*>(GameActor::GetActorsByTag(TagBird)[0])->DrawDebug(); Draw Debug for one bird
 
 	if (GlobalVariables::ShowFPS)
 	{

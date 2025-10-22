@@ -18,7 +18,5 @@ public:
 
 	static bool ShowFPS; //Show FPS on screen
 
-	static Vect2F WindForce;
-
 };
 
