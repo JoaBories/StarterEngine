@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GlobalVariables.h"
+
 #include "Util.h"
 using Struct::Transform2D;
 

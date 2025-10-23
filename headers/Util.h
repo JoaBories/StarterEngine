@@ -1,15 +1,8 @@
 #pragma once
 #include "raylib.h"
 
-#include "GlobalVariables.h"
-
 #include <random>
-using std::random_device;
-using std::mt19937;
-using std::uniform_int_distribution;
-
 #include <iostream>
-
 #include <cmath>
 
 #include <vector>
@@ -233,6 +226,8 @@ namespace MathUtils {
 	inline T Lerp(T a, T b, T t)								{ return a + (b - a) * Clamp(t, T(0), T(1)); };
 
 	using Struct::Vect2F;
+	using Struct::Vect2I;
+
 	inline Vect2F Vect2FLerp(Vect2F a, Vect2F b, float t)		{ return { Lerp(a.x, b.x, t), Lerp(a.y, b.y, t)}; };
 	
 	Vect2F Vect2FromRot(float rot);
@@ -242,4 +237,8 @@ namespace MathUtils {
 	bool NearlyEqual(const float a, const float b);
 
 	int RandInt(int min, int max);
+
+	float RandFloat(float min, float max);
+	
+	inline Vect2F RandVect2Normalized()							{ return Vect2F{RandFloat(-1.0, 1.0f), RandFloat(-1.0f, 1.0f)}.normalized(); };
 };

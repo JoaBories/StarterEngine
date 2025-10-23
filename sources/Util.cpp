@@ -45,11 +45,16 @@ bool MathUtils::NearlyEqual(const float a, const float b)
 
 int MathUtils::RandInt(int min, int max)
 {
-	static random_device rd;
-	static mt19937 gen(rd());
+	int random = min + rand() % (min + max);
 
-	uniform_int_distribution<> distr(min, max);
-	return distr(gen);
+	return random;
+}
+
+float MathUtils::RandFloat(float min, float max)
+{
+	float random = (float)rand() / (float)RAND_MAX;
+
+	return min + (random * (Abs(min) + Abs(max)));
 }
 
 #pragma endregion
@@ -89,6 +94,11 @@ Vect2F Vect2F::absolute() const
 
 Vect2F Vect2F::normalized() const
 {
+	if (*this == Vect2F::zero)
+	{
+		return Vect2F::zero;
+	}
+
 	float l = length();
 	return { x / l, y / l };
 }
