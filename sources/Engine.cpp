@@ -4,31 +4,28 @@ using MathUtils::RandInt;
 
 Engine::~Engine()
 {
-	//for (auto& actorList : GameActor::GetActorsLogic())
-	//{
-	//	for (auto& actor : actorList.second)
-	//	{
-	//		delete actor;
-	//	}
-	//}
+	GameActor::Killa();
 
-	//GameActor::mActorLogicList.clear();
-	//GameActor::mActorRenderList.clear();
-	//GameActor::mActorTagMap.clear();
-
-	// have to reimplement this in gameactor
+	delete mSceneManager;
+	delete mAssetBank;
+	delete mCamera;
 }
 
 void Engine::Init()
 {
+	mSceneManager = SceneManager::GetInstance();
 	mAssetBank = AssetBank::GetInstance();
 	mCamera = Cam2D::GetInstance();
 
 	mAssetBank->Init();
+	mCamera->SetPosition({ (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 });
 
 	InitActors(); // for actors created before (if there is)
 
 	GlobalVariables::EngineRunning = true;
+
+	mSceneManager->ChangeScene(SceneDefault);
+
 }
 
 void Engine::InitActors()

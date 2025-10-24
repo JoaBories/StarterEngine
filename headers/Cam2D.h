@@ -22,6 +22,8 @@ public:
 	Vect2F GetPosition() const;
 	float GetZoom() const;
 
+	void SetPosition(Vect2F pos);
+
 	Rect2 GetCamSpace() const;		//Rect2 of what the camera sees
 	Rect2 GetSafeCamSpace() const;  //More wider rect for occlusion
 

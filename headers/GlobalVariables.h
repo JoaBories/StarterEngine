@@ -17,6 +17,5 @@ public:
 	static float CullingSizeMultiplier; // Scale the size of the CamSpace to avoid big texture false culling
 
 	static bool ShowFPS; //Show FPS on screen
-
 };
 

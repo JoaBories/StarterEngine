@@ -24,6 +24,11 @@ float Cam2D::GetZoom() const
     return mZoom;
 }
 
+void Cam2D::SetPosition(Vect2F pos)
+{
+    mPosition = pos;
+}
+
 Rect2 Cam2D::GetCamSpace() const
 {
     Vect2F halfSize = { GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f };

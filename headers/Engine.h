@@ -1,12 +1,12 @@
 #pragma once
-#include "AssetBank.h"
 #include "Cam2D.h"
-#include "GameActor.h"
+#include "SceneManager.h"
 
 class Engine
 {
 private :
 
+	SceneManager* mSceneManager;
 	AssetBank* mAssetBank;
 	Cam2D* mCamera;
 

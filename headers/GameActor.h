@@ -38,15 +38,16 @@ protected:
 
 public:
 	//Static for all GameActors
-	static vector<GameActor*> GetActorsByTag(Tag tag);
 	static void KillPendingActors();
+	static void Killa();
 
+	static vector<GameActor*> GetActorsByTag(Tag tag);
 	inline static map<short, vector<GameActor*>> GetActorsLogic() { return mActorLogicList; };
 	inline static map<short, vector<GameActor*>> GetActorsRender() { return mActorRenderList; };
 
 	//Public for object only
 	GameActor();
-	~GameActor() = default;
+	inline ~GameActor() {};
 
 	GameActor(short logicPriority, short renderPriority, Transform2D transform, Tag tag);
 
