@@ -1,7 +1,5 @@
 #include "Util.h"
 
-using std::cout, std::endl;
-
 using Struct::Vect2F;
 using Struct::Vect2I;
 using Struct::Rect2;
@@ -15,7 +13,7 @@ Vect2F MathUtils::Vect2FromRot(float rot)
 	return vector.normalized();
 }
 
-float MathUtils::OverlapOnAxis(const vector<Vect2F>& a, const vector<Vect2F>& b, Vect2F axis) // Check if two polygons (list of points) are overlaping on a certain axis | return overlap : negative -> false / positive -> true
+float MathUtils::OverlapOnAxis(const std::vector<Vect2F>& a, const std::vector<Vect2F>& b, Vect2F axis) // Check if two polygons (list of points) are overlaping on a certain axis | return overlap : negative -> false / positive -> true
 {
 	float aMin = FLT_MAX, aMax = -FLT_MAX;
 	float bMin = FLT_MAX, bMax = -FLT_MAX;
@@ -131,9 +129,9 @@ Vect2I Vect2I::absolute() const
 
 #pragma region Rectangle
 
-vector<Vect2F> Rect2::getCorners() const
+std::vector<Vect2F> Rect2::getCorners() const
 {
-	vector<Vect2F> corners(4);
+	std::vector<Vect2F> corners(4);
 
 	float cosA = cosf(rotation * DEG2RAD);
 	float sinA = sinf(rotation * DEG2RAD);
@@ -194,7 +192,7 @@ void Struct::Rect2::DrawDebug(float scale) const
 {
 	DrawCircleV(center.toRaylib(), scale, RED);
 
-	vector<Vect2F> corners = getCorners();
+	std::vector<Vect2F> corners = getCorners();
 
 	Vect2F& lastCorner = corners[3];
 
@@ -216,10 +214,10 @@ Collision Rect2::CheckOBB(const Rect2& other) const
 	}
 	else
 	{
-		vector<Vect2F> aCorners = getCorners();
-		vector<Vect2F> bCorners = other.getCorners();
+		std::vector<Vect2F> aCorners = getCorners();
+		std::vector<Vect2F> bCorners = other.getCorners();
 
-		vector<Vect2F> axes;
+		std::vector<Vect2F> axes;
 
 		axes.push_back((aCorners[0] - aCorners[1]).PerpendicularCW());	// 2 axes is enough for a rectangle
 		axes.push_back((aCorners[1] - aCorners[2]).PerpendicularCW()); 

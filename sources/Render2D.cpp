@@ -20,7 +20,7 @@ bool Render2D::isVisible(Rect2 screenSpaceRect) const
 		return true;
 	}
 
-	vector<Vect2F> corners = screenSpaceRect.getCorners();
+	std::vector<Vect2F> corners = screenSpaceRect.getCorners();
 
 	Rect2 camSpace = Cam2D::GetInstance()->GetSafeCamSpace();
 

@@ -11,9 +11,6 @@ using Struct::Vect2I;
 
 #include <filesystem>
 
-#include <iostream>
-using std::cout, std::endl;
-
 struct TextureEntry
 {
 	Texture* texturePtr;

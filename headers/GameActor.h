@@ -5,6 +5,8 @@
 #include <map>
 #include <unordered_map>
 
+using Struct::Transform2D;
+
 enum Tag
 {
 	TagDefault
@@ -28,7 +30,7 @@ protected:
 
 	Tag mTag;
 
-	Struct::Transform2D mTransform;
+	Transform2D mTransform;
 
 	bool mPendingDestroy;
 	bool mActive = true;
@@ -46,14 +48,14 @@ public:
 	GameActor();
 	inline ~GameActor() {};
 
-	GameActor(short logicPriority, short renderPriority, Struct::Transform2D transform, Tag tag);
+	GameActor(short logicPriority, short renderPriority, Transform2D transform, Tag tag);
 
 	virtual void Init() = 0;
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
-	inline Struct::Transform2D GetTransform() const								{ return mTransform; };
-	inline void SetTransform(Struct::Transform2D transform)						{ mTransform = transform; };
+	inline Transform2D GetTransform() const										{ return mTransform; };
+	inline void SetTransform(Transform2D transform)								{ mTransform = transform; };
 
 	inline Tag GetTag() const													{ return mTag; };
 

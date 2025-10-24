@@ -1,12 +1,13 @@
 #pragma once
 #include "raylib.h"
 
-#include <random>
 #include <iostream>
+using std::cout, std::endl;
+
+#include <random>
 #include <cmath>
 
 #include <vector>
-using std::vector;
 
 // Note : 
 // -rm for right member
@@ -179,7 +180,7 @@ namespace Struct {
 		Vect2F halfSize;
 		float rotation;
 
-		vector<Vect2F> getCorners() const;
+		std::vector<Vect2F> getCorners() const;
 
 		//Collision
 		Collision CheckAABB(const Rect2& other) const;	// ignore rot
@@ -232,7 +233,7 @@ namespace MathUtils {
 	
 	Vect2F Vect2FromRot(float rot);
 
-	float OverlapOnAxis(const vector<Vect2F>& a,const vector<Vect2F>& b, Vect2F axis);
+	float OverlapOnAxis(const std::vector<Vect2F>& a,const std::vector<Vect2F>& b, Vect2F axis);
 	
 	bool NearlyEqual(const float a, const float b);
 
