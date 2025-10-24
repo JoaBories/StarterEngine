@@ -41,12 +41,12 @@ Render2D::Render2D(Rect2 textureSpace):
 {
 }
 
-void Render2D::Init(string textureName)
+void Render2D::Init(std::string textureName)
 {
 	mTexture = AssetBank::GetInstance()->GetATexture(textureName);
 }
 
-void Render2D::ChangeTexture(string textureName)
+void Render2D::ChangeTexture(std::string textureName)
 {
 	mTexture = AssetBank::GetInstance()->GetATexture(textureName);
 }

@@ -8,9 +8,6 @@
 using Struct::Transform2D;
 using Struct::Collision;
 
-#include <vector>
-using std::vector;
-
 class Render2D
 {
 
@@ -29,9 +26,9 @@ public:
 
 	Render2D(Rect2 textureSpace);
 
-	void Init(string textureName);
+	void Init(std::string textureName);
 
-	void ChangeTexture(string textureName);
+	void ChangeTexture(std::string textureName);
 	void ChangeTextureSpace(Rect2 textureSpace);
 
 	Rect2 GetTextureSpace() const;

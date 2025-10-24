@@ -1,15 +1,15 @@
 #include "SceneManager.h"
 
-SceneManager* SceneManager::mpInstance = nullptr;
+SceneManager* SceneManager::instance = nullptr;
 
 SceneManager* SceneManager::GetInstance()
 {
-	if (!mpInstance)
+	if (!instance)
 	{
-		mpInstance = new SceneManager();
+		instance = new SceneManager();
 	}
 
-	return mpInstance;
+	return instance;
 }
 
 void SceneManager::ChangeScene(Scenes newScene)

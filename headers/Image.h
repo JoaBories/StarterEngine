@@ -13,7 +13,7 @@ public:
 	ImageActor() = default;
 	~ImageActor() = default;
 
-	ImageActor(Vect2F position, Vect2F size, string texture);
+	ImageActor(Vect2F position, Vect2F size, std::string texture);
 
 	// Inherited via GameActor
 	void Init() override;

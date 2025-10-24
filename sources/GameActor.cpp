@@ -1,47 +1,46 @@
 #include "GameActor.h"
-#include "GlobalVariables.h"
 
-map<short, vector<GameActor*>> GameActor::mActorLogicList;
-map<short, vector<GameActor*>> GameActor::mActorRenderList;
-map<Tag, vector<GameActor*>> GameActor::mActorTagMap;
-
-void GameActor::AddActorToRenderList(short renderPriority, GameActor* actor)
-{
-	if (mActorRenderList.find(renderPriority) == mActorRenderList.end()) 
-	{
-		mActorRenderList[renderPriority] = vector<GameActor*>{ actor };
-	}
-	else
-	{
-		mActorRenderList[renderPriority].push_back(actor);
-	}
-}
+std::map<short, std::vector<GameActor*>> GameActor::mActorLogicList;
+std::map<short, std::vector<GameActor*>> GameActor::mActorRenderList;
+std::unordered_map<Tag, std::vector<GameActor*>> GameActor::mActorTagMap;
 
 void GameActor::AddActorToLogicList(short logicPriority, GameActor* actor)
 {
-	if (mActorLogicList.find(logicPriority) == mActorLogicList.end())
+	if (!mActorLogicList.count(logicPriority))
 	{
-		mActorLogicList[logicPriority] = vector<GameActor*>{ actor };
+		mActorLogicList[logicPriority] = std::vector<GameActor*>{ actor };
 	}
 	else
 	{
-		mActorLogicList[logicPriority].push_back(actor);
+		mActorLogicList.at(logicPriority).push_back(actor);
+	}
+}
+
+void GameActor::AddActorToRenderList(short renderPriority, GameActor* actor)
+{
+	if (!mActorRenderList.count(renderPriority)) 
+	{
+		mActorRenderList[renderPriority] = std::vector<GameActor*>{ actor };
+	}
+	else
+	{
+		mActorRenderList.at(renderPriority).push_back(actor);
 	}
 }
 
 void GameActor::AddActorToTagMap(Tag tag, GameActor* actor)
 {
-	if (mActorTagMap.find(tag) == mActorTagMap.end())
+	if (!mActorTagMap.count(tag))
 	{
-		mActorTagMap[tag] = vector<GameActor*>{ actor };
+		mActorTagMap[tag] = std::vector<GameActor*>{ actor };
 	}
 	else
 	{
-		mActorTagMap[tag].push_back(actor);
+		mActorTagMap.at(tag).push_back(actor);
 	}
 }
 
-void GameActor::KillPendingActors()
+void GameActor::KillPendingsActors()
 {
 	if (mActorLogicList.empty())
 	{
@@ -59,11 +58,8 @@ void GameActor::KillPendingActors()
 				actorList.second.erase(actorList.second.begin() + i);
 			};
 		}
-	}
 
-	if (mActorRenderList.empty())
-	{
-		return;
+		if (actorList.second.empty()) mActorLogicList.erase(actorList.first);
 	}
 
 	for (auto& actorList : mActorRenderList)
@@ -77,11 +73,8 @@ void GameActor::KillPendingActors()
 				actorList.second.erase(actorList.second.begin() + i);
 			};
 		}
-	}
 
-	if (mActorTagMap.empty())
-	{
-		return;
+		if (actorList.second.empty()) mActorRenderList.erase(actorList.first);
 	}
 
 	for (auto& actorList : mActorTagMap)
@@ -95,6 +88,8 @@ void GameActor::KillPendingActors()
 				actorList.second.erase(actorList.second.begin() + i);
 			};
 		}
+
+		if (actorList.second.empty()) mActorTagMap.erase(actorList.first);
 	}
 }
 
@@ -110,10 +105,21 @@ void GameActor::Killa()
 			}
 		}
 
-		mActorLogicList.clear();
-		mActorRenderList.clear();
-		mActorTagMap.clear();
 	}
+
+	mActorLogicList.clear();
+	mActorRenderList.clear();
+	mActorTagMap.clear();
+}
+
+std::vector<GameActor*> GameActor::GetActorsByTag(Tag tag)
+{
+	if (mActorTagMap.find(tag) == mActorTagMap.end())
+	{
+		return std::vector<GameActor*>{};
+	}
+
+	return mActorTagMap[tag];
 }
 
 GameActor::GameActor() :
@@ -129,7 +135,7 @@ GameActor::GameActor() :
 	AddActorToTagMap(mTag, this);
 }
 
-GameActor::GameActor(short logicPriority, short renderPriority, Transform2D transform, Tag tag):
+GameActor::GameActor(short logicPriority, short renderPriority, Struct::Transform2D transform, Tag tag):
 	mLogicPriority{ logicPriority },
 	mRenderPriority{ renderPriority },
 	mPendingDestroy{ false },
@@ -142,47 +148,3 @@ GameActor::GameActor(short logicPriority, short renderPriority, Transform2D tran
 	AddActorToTagMap(mTag, this);
 }
 
-void GameActor::Destroy()
-{
-	mPendingDestroy = true;
-}
-
-Transform2D GameActor::GetTransform() const
-{
-	return mTransform;
-}
-
-void GameActor::SetTransform(Transform2D transform)
-{
-	mTransform = transform;
-}
-
-Tag GameActor::GetTag() const
-{
-	return mTag;
-}
-
-vector<GameActor*> GameActor::GetActorsByTag(Tag tag)
-{
-	if (mActorTagMap.find(tag) == mActorTagMap.end())
-	{
-		return vector<GameActor*>{};
-	}
-
-	return mActorTagMap[tag];
-}
-
-bool GameActor::IsActive() const
-{
-	return mActive;
-}
-
-void GameActor::SetActive(bool active)
-{
-	mActive = active;
-}
-
-bool GameActor::ShouldBeDestroyed() const
-{
-	return mPendingDestroy;
-}

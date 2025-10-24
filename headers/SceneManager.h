@@ -12,7 +12,7 @@ class SceneManager
 {
 private:
 	Scenes mCurrentScene;
-	static SceneManager* mpInstance;
+	static SceneManager* instance;
 
 public:
 	SceneManager() = default;

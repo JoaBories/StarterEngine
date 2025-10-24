@@ -1,16 +1,5 @@
 #include "Engine.h"
 
-using MathUtils::RandInt;
-
-Engine::~Engine()
-{
-	GameActor::Killa();
-
-	delete mSceneManager;
-	delete mAssetBank;
-	delete mCamera;
-}
-
 void Engine::Init()
 {
 	mSceneManager = SceneManager::GetInstance();
@@ -44,13 +33,22 @@ void Engine::InitActors()
 	}
 }
 
+void Engine::DeInit()
+{
+	GameActor::Killa();
+
+	delete mSceneManager;
+	delete mAssetBank;
+	delete mCamera;
+}
+
 void Engine::Update()
 {
 	mCamera->Update();
 
 	UpdateActors();
 
-	GameActor::KillPendingActors();
+	GameActor::KillPendingsActors();
 }
 
 void Engine::UpdateActors()
@@ -64,7 +62,10 @@ void Engine::UpdateActors()
 	{
 		for (auto& actor : actorList.second)
 		{
-			actor->Update();
+			if (actor->IsActive())
+			{
+				actor->Update();
+			}
 		}
 	}
 }
@@ -90,7 +91,10 @@ void Engine::DrawActors()
 	{
 		for (auto& actor : actorList.second)
 		{
-			actor->Draw();
+			if (actor->IsActive())
+			{
+				actor->Draw();
+			}
 		}
 	}
 }

@@ -6,12 +6,10 @@
 using Struct::Vect2I;
 
 #include <string>
+#include <unordered_map>
 #include <map>
-using std::map, std::pair;
-using std::string;
 
 #include <filesystem>
-namespace fs = std::filesystem;
 
 #include <iostream>
 using std::cout, std::endl;
@@ -19,50 +17,54 @@ using std::cout, std::endl;
 struct TextureEntry
 {
 	Texture* texturePtr;
-	string name;
+	std::string name;
 	bool multiple;
 	Vect2I tileSize;
 	Vect2I tileOffset;
 	
 	TextureEntry() = default;
-	TextureEntry(Texture* text, string name);
-	TextureEntry(Texture* text, string name, Vect2I tileSize, Vect2I tileOffset);
-	~TextureEntry();
+	inline TextureEntry(Texture* texture, std::string name, Vect2I tileSize = Vect2I::zero, Vect2I tileOffset = Vect2I::zero) :
+		texturePtr{ texture }, name{ name }, multiple{ tileSize != Vect2I::zero }, tileSize{ tileSize }, tileOffset{ tileOffset } {};
+
+	inline ~TextureEntry() {
+		UnloadTexture(*texturePtr); delete texturePtr; };
 };
 
-struct FontEntry 
+struct FontEntry
 {
 	Font* fontPtr;
-	string name;
+	std::string name;
 
 	FontEntry() = default;
-	FontEntry(Font* font, string name);
-	~FontEntry();
+	inline FontEntry(Font* font, std::string name) :
+		fontPtr{ font }, name{ name } {
+	};
+
+	inline ~FontEntry() {
+		UnloadFont(*fontPtr); delete fontPtr;
+	};
 };
+
 
 enum AssetType
 {
-	None,
-	FontFile,
-	TextureFile,
-	SoundFile,
+	AssetDefault,
+	AssetFont,
+	AssetTexture,
 };
 
 class AssetBank
 {
 private:
-	map<string, TextureEntry*> mLoadedTextures;
-	map<string, FontEntry*> mLoadedFonts;
+	std::unordered_map<std::string, TextureEntry*> mLoadedTextures;
+	std::unordered_map<std::string, FontEntry*> mLoadedFonts;
 
-	map<string, fs::path> mUnloadedFonts;
-	map<string, fs::path> mUnloadedTextures;
+	std::unordered_map<std::string, std::filesystem::path> mUnloadedFonts;
+	std::unordered_map<std::string, std::filesystem::path> mUnloadedTextures;
 
 	Texture* mErrorTexture = nullptr;
 
-	const string mResourcePath = "resources";
-
-	void LoadAnAsset(fs::path filePath, AssetType type);
-	void FetchAnAsset(fs::path filePath, AssetType type);
+	const std::string mResourcePath = "resources";
 
 	static AssetBank* instance;
 
@@ -72,22 +74,35 @@ public:
 
 	void Init();
 
-	void SearchAFolder(fs::path folderPath);
-	void SearchAFolderFor(fs::path folderPath, AssetType forWhat);
+	void SearchAFolder(std::filesystem::path folderPath);
+	void SearchAFolderFor(std::filesystem::path folderPath, AssetType forWhat);
 	
 	void FetchAll();
 	void UnfetchAll();
 	void LoadAll();
 	void UnloadAll();
+	
+	inline void UnloadTextures() {
+		for (auto& entry : mLoadedTextures) delete entry.second; mLoadedTextures.clear(); };
 
-	void UnloadTextures();
-	void UnloadFonts();
+	inline TextureEntry* GetATexture(std::string textureName) {
+		if (mLoadedTextures.count(textureName)) LoadATexture(textureName); return mLoadedTextures.at(textureName); };
+	
+	bool FetchATexture(std::filesystem::path texturePath);
+	bool LoadATexture(std::string textureName);
 
-	TextureEntry* GetATexture(string textureName);
-	bool LoadATexture(string textureName);
-	FontEntry* GetAFont(string fontName);
-	bool LoadAFont(string fontName);
+	
+	inline void UnloadFonts() {
+		for (auto& entry : mLoadedFonts) delete entry.second; mLoadedFonts.clear();	};
 
-	static AssetBank* GetInstance();
+	inline FontEntry* GetAFont(std::string fontName) {
+		if (mLoadedFonts.count(fontName)) LoadAFont(fontName); return mLoadedFonts.at(fontName); };
+
+	bool FetchAFont(std::filesystem::path fontPath);
+	bool LoadAFont(std::string fontName);
+
+
+	inline static AssetBank* GetInstance() {
+		if (!instance) instance = new AssetBank(); return instance; };
 };
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "Cam2D.h"
+
 #include "SceneManager.h"
 
 class Engine
@@ -12,10 +12,12 @@ private :
 
 public :
 	Engine() = default;
-	~Engine();
+	~Engine() = default;
 
 	void Init();
 	void InitActors();
+
+	void DeInit();
 
 	void Update();
 	void UpdateActors();

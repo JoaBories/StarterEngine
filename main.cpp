@@ -1,5 +1,4 @@
-#include "raylib.h"
-#include "headers/Engine.h"
+#include "Engine.h"
 
 void Init();
 void DeInit();
@@ -7,7 +6,7 @@ void UpdateDraw();
 void Update();
 void Draw();
 
-Engine engine;
+Engine mEngine;
 
 int screenHeight = 600; // Window Size
 int screenWidth = 700;  //
@@ -37,11 +36,13 @@ void Init()
     InitWindow(screenWidth, screenHeight, gameName);
     SetTargetFPS(60);
 
-    engine.Init();
+    mEngine.Init();
 }
 
 void DeInit()
 {
+    mEngine.DeInit();
+
     CloseWindow();
 }
 
@@ -58,11 +59,11 @@ void UpdateDraw()
 
 void Update()
 {
-    engine.Update();
+    mEngine.Update();
 }
 
 void Draw()
 {
-    engine.Draw();
+    mEngine.Draw();
 }
 
