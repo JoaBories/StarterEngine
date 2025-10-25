@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Util.h"
-using Struct::Vect2F;
+#include "GlobalVariables.h"
 using Struct::Rect2;
 
 class Cam2D
@@ -14,19 +13,20 @@ private:
 	static Cam2D* instance;
 
 public:
-	Cam2D();
+	inline Cam2D() : mPosition{ Vect2F::zero }, mZoom{ 1 } {};
 	~Cam2D() = default;
 
 	void Update();
 
-	Vect2F GetPosition() const;
-	float GetZoom() const;
+	inline Vect2F GetPosition() const	{ return mPosition; };
+	inline float GetZoom() const		{ return mZoom; };
 
-	void SetPosition(Vect2F pos);
+	inline void SetPosition(Vect2F pos) { mPosition = pos; };
 
 	Rect2 GetCamSpace() const;		//Rect2 of what the camera sees
 	Rect2 GetSafeCamSpace() const;  //More wider rect for occlusion
 
-	static Cam2D* GetInstance();
+	inline static Cam2D* GetInstance() {
+		if (!instance) instance = new Cam2D(); return instance; };
 };
 

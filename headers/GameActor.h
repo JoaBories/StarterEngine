@@ -1,9 +1,7 @@
 #pragma once
 
 #include "GlobalVariables.h"
-
-#include <map>
-#include <unordered_map>
+#include "AssetBank.h"
 
 using Struct::Transform2D;
 

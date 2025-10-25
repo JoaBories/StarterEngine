@@ -1,7 +1,5 @@
 #pragma once
 
-#include <raylib.h>
-
 #include "Util.h"
 using Struct::Vect2I;
 

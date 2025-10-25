@@ -1,5 +1,6 @@
 #pragma once
 
+// Child of GameActor
 #include "Image.h"
 
 enum Scenes
