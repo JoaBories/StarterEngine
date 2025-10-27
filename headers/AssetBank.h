@@ -11,41 +11,54 @@ using Struct::Vect2I;
 
 struct TextureEntry
 {
-	Texture* texturePtr;
+	Texture* pTexture;
 	std::string name;
 	bool multiple;
 	Vect2I tileSize;
 	Vect2I tileOffset;
 	
 	TextureEntry() = default;
-	inline TextureEntry(Texture* texture, std::string name, Vect2I tileSize = Vect2I::zero, Vect2I tileOffset = Vect2I::zero) :
-		texturePtr{ texture }, name{ name }, multiple{ tileSize != Vect2I::zero }, tileSize{ tileSize }, tileOffset{ tileOffset } {};
+	inline TextureEntry(Texture* texture, std::string _name, Vect2I _tileSize = Vect2I::zero, Vect2I _tileOffset = Vect2I::zero) :
+		pTexture{ texture }, name{ _name }, multiple{ _tileSize != Vect2I::zero }, tileSize{ _tileSize }, tileOffset{ _tileOffset } {};
 
 	inline ~TextureEntry() {
-		UnloadTexture(*texturePtr); delete texturePtr; };
+		UnloadTexture(*pTexture); delete pTexture; };
 };
 
 struct FontEntry
 {
-	Font* fontPtr;
+	Font* pFont;
 	std::string name;
 
 	FontEntry() = default;
-	inline FontEntry(Font* font, std::string name) :
-		fontPtr{ font }, name{ name } {
-	};
+	inline FontEntry(Font* font, std::string _name) :
+		pFont{ font }, name{ _name } {};
 
 	inline ~FontEntry() {
-		UnloadFont(*fontPtr); delete fontPtr;
-	};
+		UnloadFont(*pFont); delete pFont; };
+};
+
+struct SoundEntry
+{
+	Sound* pSound;
+	std::string name;
+	float length;
+
+	SoundEntry() = default;
+	inline SoundEntry(Sound* sound, std::string _name, float _length) :
+		pSound{ sound }, name{ _name }, length{ _length } {};
+
+	inline ~SoundEntry() {
+		UnloadSound(*pSound); delete pSound; };
 };
 
 
 enum AssetType
 {
 	AssetDefault,
-	AssetFont,
 	AssetTexture,
+	AssetFont,
+	AssetSound,
 };
 
 class AssetBank
@@ -53,9 +66,11 @@ class AssetBank
 private:
 	std::unordered_map<std::string, TextureEntry*> mLoadedTextures;
 	std::unordered_map<std::string, FontEntry*> mLoadedFonts;
+	std::unordered_map<std::string, SoundEntry*> mLoadedSounds;
 
-	std::unordered_map<std::string, std::filesystem::path> mUnloadedFonts;
 	std::unordered_map<std::string, std::filesystem::path> mUnloadedTextures;
+	std::unordered_map<std::string, std::filesystem::path> mUnloadedFonts;
+	std::unordered_map<std::string, std::filesystem::path> mUnloadedSounds;
 
 	Texture* mErrorTexture = nullptr;
 
@@ -96,6 +111,15 @@ public:
 	bool FetchAFont(std::filesystem::path fontPath);
 	bool LoadAFont(std::string fontName);
 
+
+	inline void UnloadSounds() {
+		for (auto& entry : mLoadedSounds) delete entry.second; mLoadedSounds.clear(); };
+
+	inline SoundEntry* GetASound(std::string soundName) {
+		if (mLoadedSounds.count(soundName)) LoadATexture(soundName); return mLoadedSounds.at(soundName); };
+
+	bool FetchASound(std::filesystem::path soundPath);
+	bool LoadASound(std::string soundName);
 
 	inline static AssetBank* GetInstance() {
 		if (!instance) instance = new AssetBank(); return instance; };

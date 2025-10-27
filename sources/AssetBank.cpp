@@ -28,6 +28,11 @@ void AssetBank::SearchAFolder(path folderPath)
 				cout << "======== Fetching Textures" << endl;
 				SearchAFolderFor(entry.path(), AssetTexture);
 			}
+			else if (entry.path().filename() == "_Sounds")
+			{
+				cout << "======== Fetching Sounds" << endl;
+				SearchAFolderFor(entry.path(), AssetSound);
+			}
 			else
 			{
 				SearchAFolder(entry.path());
@@ -46,14 +51,23 @@ void AssetBank::SearchAFolderFor(path folderPath, AssetType forWhat)
 			continue;
 		}
 
+		if (entry.path().extension() == ".asset")
+		{
+			continue;
+		}
+
 		switch (forWhat)
 		{
 		case AssetFont:
-			FetchAFont(folderPath);
+			FetchAFont(entry.path());
 			break;
 
 		case AssetTexture:
-			FetchATexture(folderPath);
+			FetchATexture(entry.path());
+			break;
+
+		case AssetSound:
+			FetchASound(entry.path());
 			break;
 
 		default:
@@ -80,6 +94,7 @@ void AssetBank::UnfetchAll()
 {
 	mUnloadedFonts.clear();
 	mUnloadedTextures.clear();
+	mUnloadedSounds.clear();
 }
 
 void AssetBank::LoadAll()
@@ -99,6 +114,11 @@ void AssetBank::LoadAll()
 		LoadATexture(unloadedPath.first);
 	}
 
+	for (auto& unloadedPath : mUnloadedSounds)
+	{
+		LoadASound(unloadedPath.first);
+	}
+
 	auto endTime = clk::now();
 	cout << "==========| Finish loading Files in : " << std::chrono::duration<double>(endTime - startTime).count() << "s" << endl;
 }
@@ -107,6 +127,7 @@ void AssetBank::UnloadAll()
 {
 	UnloadTextures();
 	UnloadFonts();
+	UnloadSounds();
 }
 
 bool AssetBank::FetchATexture(std::filesystem::path texturePath)
@@ -143,8 +164,11 @@ bool AssetBank::FetchATexture(std::filesystem::path texturePath)
 
 		return true;
 	}
-
-	return false;
+	else
+	{
+		cout << " Error trying to fetch " << texturePath.string() << " : bad extension" << endl;
+		return false;
+	}
 }
 
 bool AssetBank::LoadATexture(std::string textureName)
@@ -193,6 +217,11 @@ bool AssetBank::LoadATexture(std::string textureName)
 
 			fileRead.close();
 		}
+		else
+		{
+			cout << " Error trying to load " << textureName << " : bad extension" << endl;
+			return false;
+		}
 
 		return true; 
 	}
@@ -227,8 +256,11 @@ bool AssetBank::FetchAFont(std::filesystem::path fontPath)
 
 		return true;
 	}
-
-	return false;
+	else
+	{
+		cout << " Error trying to fetch " << fontPath.string() << " : bad extension" << endl;
+		return false;
+	}
 }
 
 bool AssetBank::LoadAFont(std::string fontName)
@@ -259,7 +291,95 @@ bool AssetBank::LoadAFont(std::string fontName)
 
 			fileRead.close();
 		}
+		else
+		{
+			cout << " Error trying to load " << fontName << " : bad extension" << endl;
+			return false;
+		}
 
 		return true; 
+	}
+}
+
+bool AssetBank::FetchASound(std::filesystem::path soundPath)
+{
+	if (soundPath.extension() == ".mp3" || soundPath.extension() == ".wav")
+	{
+		std::string dotAssetPath;
+		dotAssetPath = soundPath.parent_path().string() + "\\" + soundPath.filename().replace_extension(".asset").string();
+		std::string name = soundPath.filename().replace_extension("").string();
+
+		mUnloadedSounds[name] = soundPath;
+
+		std::ifstream fileRead;
+		fileRead.open(dotAssetPath);
+
+		if (!fileRead) // file do not exist so i create one
+		{
+			std::ofstream fileWrite;
+
+			fileWrite.open(dotAssetPath);
+
+			if (fileWrite)
+			{
+				fileWrite << name << endl;
+				fileWrite << 0 << endl;
+			}
+
+			fileWrite.close();
+		}
+
+		fileRead.close();
+
+		return true;
+	}
+	else
+	{
+		cout << " Error trying to fetch " << soundPath.string() << " : bad extension" << endl;
+		return false;
+	}
+}
+
+bool AssetBank::LoadASound(std::string soundName)
+{
+	if (!mUnloadedTextures.count(soundName)) return false;
+
+	else
+	{
+		std::string dotAssetPath;
+		std::ifstream fileRead;
+		path filePath = mUnloadedTextures.at(soundName);
+
+		if (filePath.extension() == ".mp3" || filePath.extension() == ".wav")
+		{
+			dotAssetPath = filePath.parent_path().string() + "\\" + filePath.filename().replace_extension(".asset").string();
+			std::string name = filePath.filename().replace_extension("").string();
+
+			fileRead.open(dotAssetPath);
+
+			if (fileRead)
+			{
+				std::string temp;
+				float length;
+
+				fileRead >> temp >> length;
+				{
+					mLoadedSounds[name] = new SoundEntry(new Sound(LoadSound(filePath.string().c_str())), name, length);
+				}
+			}
+			else
+			{
+				cout << "Failed to read .asset file : " << dotAssetPath << endl;
+			}
+
+			fileRead.close();
+		}
+		else
+		{
+			cout << " Error trying to load " << soundName << " : bad extension" << endl;
+			return false;
+		}
+
+		return true;
 	}
 };

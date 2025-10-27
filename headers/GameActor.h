@@ -63,4 +63,3 @@ public:
 	inline bool ShouldBeDestroyed() const										{ return mPendingDestroy; };
 	inline void Destroy()														{ mPendingDestroy = true; };
 };
-

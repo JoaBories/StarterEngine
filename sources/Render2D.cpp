@@ -76,7 +76,7 @@ void Render2D::Draw(const Transform2D& gameActorTransform) const
 
 	if (isVisible(screenSpace))
 	{
-		Texture text = *mTexture->texturePtr;
+		Texture text = *mTexture->pTexture;
 		Rectangle sourceRect = { 0,0, (float)text.width, (float)text.height };
 		Rectangle destRect = { screenSpace.center.x, screenSpace.center.y, screenSpace.halfSize.x * 2.0f, screenSpace.halfSize.y * 2.0f }; //actorSpace.toRaylib();
 		
