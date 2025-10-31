@@ -1,7 +1,8 @@
 #pragma once
 
 // Child of GameActor
-#include "Image.h"
+#include "ImageActor.h"
+#include "TextActor.h"
 
 enum Scenes
 {
@@ -25,4 +26,3 @@ public:
 	inline Scenes GetCurrentScene() const { return mCurrentScene; };
 	void Update();
 };
-

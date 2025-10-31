@@ -1,4 +1,4 @@
-#include "Image.h"
+#include "ImageActor.h"
 
 ImageActor::ImageActor(Vect2F position, Vect2F size, std::string texture) :
 	GameActor{2,0, {position, Vect2F::one, 0}, TagDefault},

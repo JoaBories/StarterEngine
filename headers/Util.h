@@ -173,6 +173,12 @@ namespace Struct {
 		float rotation;
 	};
 
+	//Transform with : position in percentage / anchor / scale / rotation for ui objects
+	struct UiTransform
+	{
+		Vect2F mPosition;
+	};
+
 	//Oriented Rectangle struct with Collision | origin is the center
 	struct Rect2
 	{
