@@ -1,5 +1,6 @@
 #pragma once
 #include "GameActor.h"
+#include "Render2D.h"
 
 using Struct::Vect2F;
 using Struct::Collision;
@@ -8,6 +9,8 @@ class Bird : public GameActor
 {
 
 protected :
+
+	Render2D mRender;
 
 	float mSize;
 	Vect2F mVelocity;

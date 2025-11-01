@@ -9,12 +9,12 @@ void Draw();
 
 Engine engine;
 
-int screenHeight = 600; // Window Size
-int screenWidth = 700;  //
+int screenHeight = 720; // Window Size
+int screenWidth = 1720;  //
 
-Color backgroundColor = RAYWHITE;
+Color backgroundColor = Color{ 10, 20, 40, 255 };
 
-const char* gameName = "Starter Engine"; //Name of the window
+const char* gameName = "Swarm Sim"; //Name of the window
 
 int main() {
 

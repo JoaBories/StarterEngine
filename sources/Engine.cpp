@@ -28,6 +28,8 @@ void Engine::Init()
 
 	mAssetBank->Init();
 
+	mCamera->SetPosition({ (float)GetScreenWidth() / 2.0f, (float)GetScreenHeight() / 2.0f });
+
 	InitActors(); // for actors created before (if there is)
 
 	GlobalVariables::EngineRunning = true;

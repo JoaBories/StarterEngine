@@ -1,4 +1,4 @@
-#include "Bird.h"
+#include "Fish.h"
 
 using MathUtils::RandVect2Normalized;
 using MathUtils::Clamp;
@@ -178,6 +178,7 @@ vector<vector<Bird*>> Bird::GetNeighbors() const
 
 Bird::Bird(Vect2F pos, float size):
 	GameActor(0, 0, { pos, Vect2F::one, 0 }, TagBird),
+	mRender{ {Vect2F::zero, {size + 10.0f, size + 10.0f}} },
 	mSize{ size },
 	mSpeed{ 50.0f },
 	mSeparation{ 25 },
@@ -187,10 +188,15 @@ Bird::Bird(Vect2F pos, float size):
 	mForce{ Vect2F::zero }
 {
 	mVelocity = RandVect2Normalized();
+	if (GlobalVariables::EngineRunning)
+	{
+		Init();
+	}
 }
 
 void Bird::Init()
 {
+	mRender.Init("fish");
 }
 
 void Bird::Update()
@@ -208,7 +214,11 @@ void Bird::Update()
 
 void Bird::Draw()
 {
-	DrawCircleV(mTransform.position.toRaylib(), mSize, BLACK);
+	float direction = mVelocity.getRot();
+	Rect2 currentTextureSpace = mRender.GetTextureSpace();
+	mRender.ChangeTextureSpace({ currentTextureSpace.center, currentTextureSpace.halfSize, direction });
+
+	mRender.Draw(mTransform);
 }
 
 void Bird::DrawDebug() const
