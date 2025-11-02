@@ -240,21 +240,21 @@ void Fish::DrawDebug() const
 	//Neighbors
 	vector<std::unordered_map<Fish*, float>> neighbors = GetNeighbors();
 
-	DrawCircleLines(mTransform.position.x, mTransform.position.y, mSeparation, RED);
+	DrawCircleLines( (int)mTransform.position.x, (int)mTransform.position.y, mSeparation, RED);
 	for (auto& bird : neighbors[0])
 	{
-		DrawCircleLines(bird.first->GetTransform().position.x, bird.first->GetTransform().position.y, bird.first->GetSize() + 2, RED);
+		DrawCircleLines((int)bird.first->GetTransform().position.x, (int)bird.first->GetTransform().position.y, bird.first->GetSize() + 2, RED);
 	}
 
-	DrawCircleLines(mTransform.position.x, mTransform.position.y, mAlignment, GREEN);
+	DrawCircleLines( (int)mTransform.position.x, (int)mTransform.position.y, mAlignment, GREEN);
 	for (auto& bird : neighbors[1])
 	{
-		DrawCircleLines(bird.first->GetTransform().position.x, bird.first->GetTransform().position.y, bird.first->GetSize() + 4, GREEN);
+		DrawCircleLines((int)bird.first->GetTransform().position.x, (int)bird.first->GetTransform().position.y, bird.first->GetSize() + 4, GREEN);
 	}
 
-	DrawCircleLines(mTransform.position.x, mTransform.position.y, mCohesion, BLUE);
+	DrawCircleLines( (int)mTransform.position.x, (int)mTransform.position.y, mCohesion, BLUE);
 	for (auto& bird : neighbors[2])
 	{
-		DrawCircleLines(bird.first->GetTransform().position.x, bird.first->GetTransform().position.y, bird.first->GetSize() + 6, BLUE);
+		DrawCircleLines((int)bird.first->GetTransform().position.x, (int)bird.first->GetTransform().position.y, bird.first->GetSize() + 6, BLUE);
 	}
 }

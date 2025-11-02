@@ -32,7 +32,7 @@ int main() {
 
 void Init()
 {
-    srand(time(0));
+    srand((unsigned int)time(0));
 
     InitWindow(screenWidth, screenHeight, gameName);
     SetTargetFPS(60);
