@@ -4,7 +4,7 @@ using MathUtils::RandVect2Normalized;
 using MathUtils::Clamp;
 using MathUtils::Vect2FromRot;
 
-Collision Bird::GetScreenCollision()
+Collision Fish::GetScreenCollision()
 {
 	Collision result = Collision();
 
@@ -33,7 +33,7 @@ Collision Bird::GetScreenCollision()
 	return result;
 }
 
-void Bird::ResolveScreenCollisions()
+void Fish::ResolveScreenCollisions()
 {
 	Collision coll = GetScreenCollision();
 
@@ -66,9 +66,9 @@ void Bird::ResolveScreenCollisions()
 	}
 }
 
-void Bird::ResolveNeighborsRules()
+void Fish::ResolveNeighborsRules()
 {
-	vector<vector<Bird*>> allNeighbors = GetNeighbors();
+	vector<std::unordered_map<Fish*, float>> allNeighbors = GetNeighbors();
 
 	if (allNeighbors[0].size() > 0)
 	{
@@ -86,52 +86,56 @@ void Bird::ResolveNeighborsRules()
 	}
 }
 
-void Bird::ResolveAlignment(vector<Bird*> neighbors)
+void Fish::ResolveAlignment(std::unordered_map<Fish*, float> neighbors)
 {
 	Vect2F force = Vect2F::zero;
 	Vect2F ttNeighborsVel = Vect2F::zero;
+	float ttNeighbors;
 
-	for (const Bird* neighbor : neighbors)
+	for (const auto& neighbor : neighbors)
 	{
-		ttNeighborsVel += neighbor->GetVel();
+		ttNeighborsVel += neighbor.first->GetVel() * (neighbor.second / mAlignment);
+		ttNeighbors = (neighbor.second / mAlignment);
 	}
 
-	force = ttNeighborsVel / (int)neighbors.size();
+	force = ttNeighborsVel / ttNeighbors;
 
-	mForce += force.normalized() * 0.6f;
+	mForce += force.normalized() * 0.9f;
 }
 
-void Bird::ResolveSeparation(vector<Bird*> neighbors)
+void Fish::ResolveSeparation(std::unordered_map<Fish*, float> neighbors)
 {
 	Vect2F force = Vect2F::zero;
 	Vect2F ttNeighborsDis = Vect2F::zero;
 
-	for (const Bird* neighbor : neighbors)
+	for (const auto& neighbor : neighbors)
 	{
-		ttNeighborsDis += mTransform.position - neighbor->GetTransform().position;
+		ttNeighborsDis += (mTransform.position - neighbor.first->GetTransform().position) * (neighbor.second / mAlignment);
 	}
 
-	mForce += ttNeighborsDis.normalized();
+	mForce += ttNeighborsDis.normalized() * 2.0f;
 }
 
-void Bird::ResolveCohesion(vector<Bird*> neighbors)
+void Fish::ResolveCohesion(std::unordered_map<Fish*, float> neighbors)
 {
 	Vect2F force = Vect2F::zero;
 	Vect2F ttNeighborsPos = Vect2F::zero;
+	float ttNeighbors;
 
-	for (const Bird* neighbor : neighbors)
+	for (const auto& neighbor : neighbors)
 	{
-		ttNeighborsPos += neighbor->GetTransform().position - mTransform.position;
+		ttNeighborsPos += (neighbor.first->GetTransform().position - mTransform.position) * (neighbor.second / mAlignment);
+		ttNeighbors = (neighbor.second / mAlignment);
 	}
 
-	force = ttNeighborsPos / (int)neighbors.size();
+	force = ttNeighborsPos / ttNeighbors;
 
-	mForce += force.normalized() * 0.4f;
+	mForce += force.normalized() * 0.6f;
 }
 
-vector<vector<Bird*>> Bird::GetNeighbors() const
+vector<std::unordered_map<Fish*, float>> Fish::GetNeighbors() const
 {
-	vector<vector<Bird*>> neighbors = { {}, {}, {} };
+	vector<std::unordered_map<Fish*, float>> neighbors = { {}, {}, {} };
 
 	Vect2F normalizedVel = mVelocity.normalized();
 	
@@ -152,23 +156,23 @@ vector<vector<Bird*>> Bird::GetNeighbors() const
 			continue;
 		}
 
-		if (Bird* bird = dynamic_cast<Bird*>(actor))
+		if (Fish* bird = dynamic_cast<Fish*>(actor))
 		{
 			float distance = (mTransform.position - bird->GetTransform().position).length();
 			
 			if (distance <= mSeparation)
 			{
-				neighbors[0].push_back(bird);
+				neighbors[0][bird] = distance;
 			}
 
 			if (distance <= mAlignment)
 			{
-				neighbors[1].push_back(bird);
+				neighbors[1][bird] = distance;
 			}
 
 			if (distance <= mCohesion)
 			{
-				neighbors[2].push_back(bird);
+				neighbors[2][bird] = distance;
 			}
 		}
 	}
@@ -176,7 +180,7 @@ vector<vector<Bird*>> Bird::GetNeighbors() const
 	return neighbors;
 }
 
-Bird::Bird(Vect2F pos, float size):
+Fish::Fish(Vect2F pos, float size):
 	GameActor(0, 0, { pos, Vect2F::one, 0 }, TagBird),
 	mRender{ {Vect2F::zero, {size + 10.0f, size + 10.0f}} },
 	mSize{ size },
@@ -184,7 +188,7 @@ Bird::Bird(Vect2F pos, float size):
 	mSeparation{ 25 },
 	mAlignment{ 50 },
 	mCohesion{ 100 },
-	mFov{ 300 },
+	mFov{ 240 },
 	mForce{ Vect2F::zero }
 {
 	mVelocity = RandVect2Normalized();
@@ -194,12 +198,12 @@ Bird::Bird(Vect2F pos, float size):
 	}
 }
 
-void Bird::Init()
+void Fish::Init()
 {
 	mRender.Init("fish");
 }
 
-void Bird::Update()
+void Fish::Update()
 {
 	ResolveScreenCollisions();
 
@@ -212,7 +216,7 @@ void Bird::Update()
 	mTransform.position += mVelocity * mSpeed * GetFrameTime();
 }
 
-void Bird::Draw()
+void Fish::Draw()
 {
 	float direction = mVelocity.getRot();
 	Rect2 currentTextureSpace = mRender.GetTextureSpace();
@@ -221,7 +225,7 @@ void Bird::Draw()
 	mRender.Draw(mTransform);
 }
 
-void Bird::DrawDebug() const
+void Fish::DrawDebug() const
 {
 	//Vel
 	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + mVelocity * 30).toRaylib(), 2.0f, GREEN);
@@ -234,23 +238,23 @@ void Bird::DrawDebug() const
 	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + Vect2FromRot(mVelocity.getRot() + mFov / 2) * 300).toRaylib(), 1.0f, DARKGRAY);
 
 	//Neighbors
-	vector<vector<Bird*>> neighbors = GetNeighbors();
+	vector<std::unordered_map<Fish*, float>> neighbors = GetNeighbors();
 
 	DrawCircleLines(mTransform.position.x, mTransform.position.y, mSeparation, RED);
-	for (Bird* bird : neighbors[0])
+	for (auto& bird : neighbors[0])
 	{
-		DrawCircleLines(bird->GetTransform().position.x, bird->GetTransform().position.y, bird->GetSize() + 2, RED);
+		DrawCircleLines(bird.first->GetTransform().position.x, bird.first->GetTransform().position.y, bird.first->GetSize() + 2, RED);
 	}
 
 	DrawCircleLines(mTransform.position.x, mTransform.position.y, mAlignment, GREEN);
-	for (Bird* bird : neighbors[1])
+	for (auto& bird : neighbors[1])
 	{
-		DrawCircleLines(bird->GetTransform().position.x, bird->GetTransform().position.y, bird->GetSize() + 4, GREEN);
+		DrawCircleLines(bird.first->GetTransform().position.x, bird.first->GetTransform().position.y, bird.first->GetSize() + 4, GREEN);
 	}
 
 	DrawCircleLines(mTransform.position.x, mTransform.position.y, mCohesion, BLUE);
-	for (Bird* bird : neighbors[2])
+	for (auto& bird : neighbors[2])
 	{
-		DrawCircleLines(bird->GetTransform().position.x, bird->GetTransform().position.y, bird->GetSize() + 6, BLUE);
+		DrawCircleLines(bird.first->GetTransform().position.x, bird.first->GetTransform().position.y, bird.first->GetSize() + 6, BLUE);
 	}
 }

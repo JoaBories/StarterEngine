@@ -1,11 +1,12 @@
 #pragma once
 #include "GameActor.h"
 #include "Render2D.h"
+#include <unordered_map>
 
 using Struct::Vect2F;
 using Struct::Collision;
 
-class Bird : public GameActor
+class Fish : public GameActor
 {
 
 protected :
@@ -25,18 +26,18 @@ protected :
 	void ResolveScreenCollisions();
 
 	void ResolveNeighborsRules();
-	void ResolveAlignment(vector<Bird*> neighbors);
-	void ResolveSeparation(vector<Bird*> neighbors);
-	void ResolveCohesion(vector<Bird*> neighbors);
+	void ResolveAlignment(std::unordered_map<Fish*, float> neighbors);
+	void ResolveSeparation(std::unordered_map<Fish*, float> neighbors);
+	void ResolveCohesion(std::unordered_map<Fish*, float> neighbors);
 
-	vector<vector<Bird*>> GetNeighbors() const;
+	vector<std::unordered_map<Fish*, float>> GetNeighbors() const;
 
 public :
 
-	Bird() = default;
-	~Bird() = default;
+	Fish() = default;
+	~Fish() = default;
 
-	Bird(Vect2F pos, float size = 5.0f);
+	Fish(Vect2F pos, float size = 5.0f);
 
 	inline float GetSize() const { return mSize; };
 	inline Vect2F GetVel() const { return mVelocity; };
@@ -46,6 +47,5 @@ public :
 	void Draw() override;
 
 	void DrawDebug() const;
-
 };
 

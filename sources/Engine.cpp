@@ -34,9 +34,9 @@ void Engine::Init()
 
 	GlobalVariables::EngineRunning = true;
 
-	for (int i = 0; i < 500; i++)
+	for (int i = 0; i < 200; i++)
 	{
-		new Bird({ RandFloat(0, (float)GetScreenWidth()), RandFloat(0, (float)GetScreenHeight())});
+		new Fish({ RandFloat(0, (float)GetScreenWidth()), RandFloat(0, (float)GetScreenHeight())});
 	}
 }
 
