@@ -37,7 +37,7 @@ public :
 	Fish() = default;
 	~Fish() = default;
 
-	Fish(Vect2F pos, float size = 5.0f);
+	Fish(Vect2F pos, float size = 15.0f);
 
 	inline float GetSize() const { return mSize; };
 	inline Vect2F GetVel() const { return mVelocity; };

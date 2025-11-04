@@ -11,7 +11,8 @@ using std::map;
 enum Tag
 {
 	TagDefault,
-	TagBird
+	TagBird,
+	TagPredator
 };
 
 class GameActor

@@ -38,6 +38,8 @@ void Engine::Init()
 	{
 		new Fish({ RandFloat(0, (float)GetScreenWidth()), RandFloat(0, (float)GetScreenHeight())});
 	}
+
+	new Predator({ (float)GetScreenWidth() / 2.0f, (float)GetScreenHeight() / 2.0f });
 }
 
 void Engine::InitActors()

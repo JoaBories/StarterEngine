@@ -3,6 +3,7 @@
 #include "Cam2D.h"
 #include "GameActor.h"
 #include "Fish.h"
+#include "Predator.h"
 
 class Engine
 {

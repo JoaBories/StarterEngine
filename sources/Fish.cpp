@@ -181,8 +181,8 @@ vector<std::unordered_map<Fish*, float>> Fish::GetNeighbors() const
 }
 
 Fish::Fish(Vect2F pos, float size):
-	GameActor(0, 0, { pos, Vect2F::one, 0 }, TagBird),
-	mRender{ {Vect2F::zero, {size + 10.0f, size + 10.0f}} },
+	GameActor(1, 1, { pos, Vect2F::one, 0 }, TagBird),
+	mRender{ {Vect2F::zero, {size, size}} },
 	mSize{ size },
 	mSpeed{ 50.0f },
 	mSeparation{ 25 },
