@@ -141,7 +141,7 @@ vector<std::unordered_map<Fish*, float>> Fish::GetNeighbors() const
 	
 	float dotTreshold = - (mFov / 180.0f - 1.0f);
 
-	for (GameActor* actor : GameActor::GetActorsByTag(TagBird))
+	for (GameActor* actor : GameActor::GetActorsByTag(TagFish))
 	{
 		if (this == actor)
 		{
@@ -181,7 +181,7 @@ vector<std::unordered_map<Fish*, float>> Fish::GetNeighbors() const
 }
 
 Fish::Fish(Vect2F pos, float size):
-	GameActor(1, 1, { pos, Vect2F::one, 0 }, TagBird),
+	GameActor(1, 1, { pos, Vect2F::one, 0 }, TagFish),
 	mRender{ {Vect2F::zero, {size, size}} },
 	mSize{ size },
 	mSpeed{ 50.0f },

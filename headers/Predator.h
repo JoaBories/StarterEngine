@@ -1,6 +1,5 @@
 #pragma once
-#include "GameActor.h"
-#include "Render2D.h"
+#include "Fish.h"
 
 class Predator : public GameActor
 {
@@ -15,6 +14,16 @@ private:
 	float mSpeed;
 	float mFov;
 
+	Fish* mPrey;
+	bool mHunting;
+	Vect2F mCurrentGoal;
+	float mTimeSinceLastGoal;
+
+	Collision GetScreenCollision();
+	void ResolveScreenCollisions();
+
+	void ChooseNewGoal();
+
 public:
 
 	Predator() = default;
@@ -26,5 +35,7 @@ public:
 	void Init() override;
 	void Update() override;
 	void Draw() override;
+
+	void DrawDebug() const;
 };
 

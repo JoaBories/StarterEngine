@@ -87,7 +87,7 @@ void Engine::Draw()
 {
 	DrawActors();
 
-	//dynamic_cast<Bird*>(GameActor::GetActorsByTag(TagBird)[0])->DrawDebug(); Draw Debug for one bird
+	dynamic_cast<Predator*>(GameActor::GetActorsByTag(TagPredator)[0])->DrawDebug();
 
 	if (GlobalVariables::ShowFPS)
 	{
