@@ -1,5 +1,6 @@
 #pragma once
-#include "Fish.h"
+#include "GameActor.h"
+#include "Render2D.h"
 
 class Predator : public GameActor
 {
@@ -14,15 +15,17 @@ private:
 	float mSpeed;
 	float mFov;
 
-	Fish* mPrey;
+	GameActor* mPrey;
 	bool mHunting;
 	Vect2F mCurrentGoal;
 	float mTimeSinceLastGoal;
+	float mTimeUntilNexHunt;
 
 	Collision GetScreenCollision();
 	void ResolveScreenCollisions();
 
 	void ChooseNewGoal();
+	void ChooseNewPrey();
 
 public:
 
@@ -37,5 +40,7 @@ public:
 	void Draw() override;
 
 	void DrawDebug() const;
+
+	inline bool IsHunting() const { return mHunting; };
 };
 

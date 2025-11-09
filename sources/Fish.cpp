@@ -133,6 +133,70 @@ void Fish::ResolveCohesion(std::unordered_map<Fish*, float> neighbors)
 	mForce += force.normalized() * 0.6f;
 }
 
+void Fish::ResolvePredatorRules()
+{
+	mSpeed = 50.0f;
+
+	float shortestDistance = INFINITY;
+	float shortestHuntingDistance = INFINITY;
+	Predator* nearestPredator = nullptr;
+	Predator* nearestHuntingPredator = nullptr;
+
+	for (GameActor* actor : GameActor::GetActorsByTag(TagPredator))
+	{
+		Predator* mPredator = dynamic_cast<Predator*>(GetActorsByTag(TagPredator)[0]);
+
+		if (mPredator)
+		{
+			float distancePredator = (mTransform.position - mPredator->GetTransform().position).sqrLength();
+
+			if (mPredator->IsHunting())
+			{
+				if (distancePredator < shortestHuntingDistance)
+				{
+					shortestHuntingDistance = distancePredator;
+					nearestHuntingPredator = mPredator;
+				}
+			}
+
+			if (distancePredator < shortestDistance)
+			{
+				shortestDistance = distancePredator;
+				nearestPredator = mPredator;
+			}
+		}
+	}
+
+	if (nearestPredator)
+	{
+		if (shortestDistance < mAlignment * mAlignment)
+		{
+			mSpeed = 60.0f;
+			ResolvePredatorSeparation(nearestPredator);
+		}
+	}
+
+	if (nearestHuntingPredator)
+	{
+		mSpeed = 60.0f;
+
+		if (shortestHuntingDistance < mCohesion * mCohesion)
+		{
+			ResolvePredatorFlee(nearestHuntingPredator);
+		}
+	}
+}
+
+void Fish::ResolvePredatorFlee(Predator* predator)
+{
+	mForce = (mTransform.position - predator->GetTransform().position).normalized();
+}
+
+void Fish::ResolvePredatorSeparation(Predator* predator)
+{
+	mForce = (mTransform.position - predator->GetTransform().position).normalized();
+}
+
 vector<std::unordered_map<Fish*, float>> Fish::GetNeighbors() const
 {
 	vector<std::unordered_map<Fish*, float>> neighbors = { {}, {}, {} };
@@ -180,7 +244,7 @@ vector<std::unordered_map<Fish*, float>> Fish::GetNeighbors() const
 	return neighbors;
 }
 
-Fish::Fish(Vect2F pos, float size):
+Fish::Fish(Vect2F pos, float size) :
 	GameActor(1, 1, { pos, Vect2F::one, 0 }, TagFish),
 	mRender{ {Vect2F::zero, {size, size}} },
 	mSize{ size },
@@ -211,9 +275,12 @@ void Fish::Update()
 
 	ResolveNeighborsRules();
 
-	mVelocity = (mVelocity + mForce * GetFrameTime()).normalized();
+	ResolvePredatorRules();
 
-	mTransform.position += mVelocity * mSpeed * GetFrameTime();
+	mVelocity += mForce.normalized() * GetFrameTime() * mSpeed;
+	mVelocity = mVelocity.clamp(mSpeed - 10.0f, mSpeed);
+
+	mTransform.position += mVelocity * GetFrameTime();
 }
 
 void Fish::Draw()

@@ -1,6 +1,7 @@
 #pragma once
 #include "GameActor.h"
 #include "Render2D.h"
+#include "Predator.h"
 #include <unordered_map>
 
 using Struct::Vect2F;
@@ -29,6 +30,10 @@ protected :
 	void ResolveAlignment(std::unordered_map<Fish*, float> neighbors);
 	void ResolveSeparation(std::unordered_map<Fish*, float> neighbors);
 	void ResolveCohesion(std::unordered_map<Fish*, float> neighbors);
+
+	void ResolvePredatorRules();
+	void ResolvePredatorFlee(Predator* predator);		//Same forces but different behaviour in theory.
+	void ResolvePredatorSeparation(Predator* predator);	//I can comeback later to refine.
 
 	vector<std::unordered_map<Fish*, float>> GetNeighbors() const;
 

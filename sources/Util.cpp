@@ -54,7 +54,7 @@ float MathUtils::RandFloat(float min, float max)
 {
 	float random = (float)rand() / (float)RAND_MAX;
 
-	return min + (random * (Abs(min) + Abs(max)));
+	return min + random * (max - min);
 }
 
 #pragma endregion
@@ -101,6 +101,25 @@ Vect2F Vect2F::normalized() const
 
 	float l = length();
 	return { x / l, y / l };
+}
+
+Vect2F Struct::Vect2F::clamp(float min, float max) const
+{
+	float sqrL = sqrLength();
+
+	if (sqrL < min * min)
+	{
+		return normalized() * min;
+	}
+	else
+	{
+		if (sqrL > max * max)
+		{
+			return normalized() * max;
+		}
+	}
+
+	return *this;
 }
 
 //Vect2I

@@ -39,7 +39,11 @@ void Engine::Init()
 		new Fish({ RandFloat(0, (float)GetScreenWidth()), RandFloat(0, (float)GetScreenHeight())});
 	}
 
-	new Predator({ (float)GetScreenWidth() / 2.0f, (float)GetScreenHeight() / 2.0f });
+	for (int i = 0; i < 5; i++)
+	{
+		new Predator({ (float)GetScreenWidth() / 2.0f, (float)GetScreenHeight() / 2.0f });
+	}
+	
 }
 
 void Engine::InitActors()
@@ -86,8 +90,6 @@ void Engine::UpdateActors()
 void Engine::Draw()
 {
 	DrawActors();
-
-	dynamic_cast<Predator*>(GameActor::GetActorsByTag(TagPredator)[0])->DrawDebug();
 
 	if (GlobalVariables::ShowFPS)
 	{

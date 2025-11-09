@@ -77,6 +77,25 @@ void Predator::ChooseNewGoal()
 	mCurrentGoal = newGoal;
 }
 
+void Predator::ChooseNewPrey()
+{
+	float shortestLength = INFINITY;
+	GameActor* bestPrey = nullptr;
+
+	for (GameActor* fish : GameActor::GetActorsByTag(TagFish))
+	{
+		float length = (mTransform.position - fish->GetTransform().position).sqrLength();
+
+		if (length < shortestLength) 
+		{
+			shortestLength = length;
+			bestPrey = fish;
+		}
+	}
+
+	mPrey = bestPrey;
+}
+
 Predator::Predator(Vect2F pos, float size) :
 	GameActor(0, 0, { pos, Vect2F::one, 0 }, TagPredator),
 	mRender{ {Vect2F::zero, {size, size}} },
@@ -85,12 +104,14 @@ Predator::Predator(Vect2F pos, float size) :
 	mForce{ Vect2F::zero },
 	mSpeed{ 50.0f },
 	mFov{ 180 },
-	mHunting{ false },
 	mPrey{ nullptr },
+	mHunting{ false },
+	mCurrentGoal{ Vect2F::zero },
 	mTimeSinceLastGoal{ 0.0f },
-	mCurrentGoal{ Vect2F::zero }
+	mTimeUntilNexHunt{ 0.0f }
 {
 	mVelocity = RandVect2Normalized();
+	mTimeUntilNexHunt = MathUtils::RandFloat(20.0f, 60.0f);
 	if (GlobalVariables::EngineRunning)
 	{
 		Init();
@@ -109,11 +130,35 @@ void Predator::Update()
 
 	if (mHunting)
 	{
+		mSpeed = 80.0f;
+		mTimeUntilNexHunt -= GetFrameTime();
 
+		if (mTimeUntilNexHunt <= 0.0f)
+		{
+			mTimeUntilNexHunt = MathUtils::RandFloat(20.0f, 60.0f);
+			mHunting = false;
+		}
+
+		if ((mTransform.position - mPrey->GetTransform().position).sqrLength() <= 100.0f)
+		{
+			mTimeUntilNexHunt = MathUtils::RandFloat(20.0f, 60.0f);
+			mHunting = false;
+		}
+
+		mForce = mPrey->GetTransform().position - mTransform.position;
 	}
 	else
 	{
+		mSpeed = 50.0f;
 		mTimeSinceLastGoal -= GetFrameTime();
+		mTimeUntilNexHunt -= GetFrameTime();
+
+		if (mTimeUntilNexHunt <= 0.0f)
+		{
+			ChooseNewPrey();
+			mTimeUntilNexHunt = MathUtils::RandFloat(10.0f, 20.0f);
+			mHunting = true;
+		}
 
 		if (mTimeSinceLastGoal <= 0.0f)
 		{
@@ -121,15 +166,20 @@ void Predator::Update()
 			mTimeSinceLastGoal = 10.0f;
 		}
 
+		if ((mTransform.position - mCurrentGoal).sqrLength() <= 100.0f)
+		{
+			ChooseNewGoal();
+			mTimeSinceLastGoal = 10.0f;
+		}
+
 		mForce = mCurrentGoal - mTransform.position;
-		mForce = mForce.normalized();
 	}
 
-	mVelocity += mForce.normalized() * GetFrameTime() * 0.5f;
-	mVelocity = mVelocity.normalized();
+	mVelocity += mForce.normalized() * GetFrameTime() * mSpeed;
+	mVelocity = mVelocity.clamp(20.0f, mSpeed);
 
 
-	mTransform.position += mVelocity * mSpeed * GetFrameTime();
+	mTransform.position += mVelocity * GetFrameTime();
 }
 
 void Predator::Draw()
@@ -144,7 +194,9 @@ void Predator::Draw()
 void Predator::DrawDebug() const
 {
 	DrawCircleV((mTransform.position - Vect2F{ 0,10 }).toRaylib(), 5.0f, (mHunting) ? RED : GREEN);
-	
+	DrawLineEx(mTransform.position.toRaylib(), (mTransform.position + mVelocity * 2).toRaylib(), 2.0f, GREEN);
+
+
 	if (mHunting)
 	{
 		DrawCircleLines(mPrey->GetTransform().position.x, mPrey->GetTransform().position.y, 10.0f, RED);
@@ -156,8 +208,10 @@ void Predator::DrawDebug() const
 		DrawCircleLines(mCurrentGoal.x, mCurrentGoal.y, 10.0f, GREEN);
 		DrawLineV(mCurrentGoal.toRaylib(), mTransform.position.toRaylib(), GREEN);
 
-		Vect2F pos = mTransform.position + Vect2F{ 10.0f  ,10.0f };
+		Vect2F pos = mTransform.position + Vect2F{ -10.0f  ,10.0f };
 		DrawText(std::to_string(mTimeSinceLastGoal).c_str(), pos.x, pos.y, 10, WHITE);
+		pos = mTransform.position + Vect2F{ -10.0f  ,20.0f };
+		DrawText(std::to_string(mTimeUntilNexHunt).c_str(), pos.x, pos.y, 10, WHITE);
 	}
 }
 
