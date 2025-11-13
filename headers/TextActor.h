@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UiActor.h"
+
 class TextActor
 {
 private:

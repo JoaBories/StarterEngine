@@ -1,6 +1,7 @@
 #pragma once
-#include "GameActor.h"
-class UiActor : public GameActor
+#include "GlobalVariables.h"
+
+class UiActor
 {
 protected:
 

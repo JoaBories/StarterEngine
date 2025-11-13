@@ -84,6 +84,7 @@ namespace Struct {
 
 		Vect2F absolute() const;
 		Vect2F normalized() const;
+		Vect2F clamp(float min, float max) const;
 
 		inline Vector2 toRaylib() const					{ return { x, y }; };
 	};
